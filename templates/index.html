@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sporthink — Satış Analiz Paneli</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+<script>
+  (function() {
+    try {
+      localStorage.removeItem('sporthink_dark');
+      if (sessionStorage.getItem('sporthink_dark') === '1') {
+        document.documentElement.classList.add('dark-pre');
+        document.addEventListener('DOMContentLoaded', function() {
+          document.body.classList.add('dark');
+          document.documentElement.classList.remove('dark-pre');
+        });
+      }
+    } catch(e) {}
+  })();
+</script>
+<style>
+  html.dark-pre, html.dark-pre body { background: #0F0F12 !important; }
+</style>
+</head>
+<body>
+
+<!-- NAV SIDEBAR -->
+<div class="nav-sidebar" id="nav-sidebar">
+  <div class="nav-header">
+    <div class="nav-logo" onclick="setNav('dashboard', document.getElementById('navbtn-dashboard'))" style="cursor:pointer" title="Ana Sayfa">
+      <img class="logo-light" src="{{ url_for('static', filename='images/sporthink-logo.png') }}" alt="Sporthink">
+      <img class="logo-dark"  src="{{ url_for('static', filename='images/sporthink-logo-dark.png') }}" alt="Sporthink">
+    </div>
+    <button class="nav-collapse-btn" onclick="toggleSidebar()" title="Küçült">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+  </div>
+
+  <div class="nav-item active" id="navbtn-dashboard" onclick="setNav('dashboard', this)">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <span class="nav-item-label">Dashboard</span>
+  </div>
+
+  <div class="nav-item" id="navbtn-kartlar" onclick="toggleKartlarMenu(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="10" width="5" height="11" rx="1"/><rect x="9" y="6" width="5" height="15" rx="1"/><rect x="16" y="2" width="5" height="19" rx="1"/></svg>
+    <span class="nav-item-label">Top 10 Kartlar</span>
+    <svg id="kartlar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-left:auto;flex-shrink:0;transition:transform 0.22s ease;stroke:var(--text-light)"><path d="m6 9 6 6 6-6"/></svg>
+  </div>
+  <div id="kartlar-submenu" style="display:none; flex-direction:column; gap:2px; padding-left:14px;">
+    <div class="nav-sub-item" id="nav-bs" onclick="selectKartlarTab('bs', this)">
+      <div class="nav-sub-dot nav-sub-dot-bs" style="width:7px;height:7px;border-radius:50%;background:#16a34a;flex-shrink:0"></div>
+      <span>Best Seller</span>
+    </div>
+    <div class="nav-sub-item" id="nav-ws" onclick="selectKartlarTab('ws', this)">
+      <div class="nav-sub-dot nav-sub-dot-ws" style="width:7px;height:7px;border-radius:50%;background:#E63030;flex-shrink:0"></div>
+      <span>Worst Seller</span>
+    </div>
+  </div>
+
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-filter-section" id="nav-filter-section">
+    <!-- Accordion başlık (sticky) -->
+    <div class="nav-filter-acc-head" onclick="toggleFilterAccordion()">
+      <svg class="nav-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>
+      <span class="nav-filter-acc-label">Filtreler</span>
+      <svg class="nav-filter-acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="nav-filter-acc-body">
+
+    <!-- ANA GRUP -->
+    <div class="nav-filter-group" id="fg-anagrp">
+      <div class="nav-filter-head" onclick="toggleNavFilter('fg-anagrp')">
+        <svg class="nav-filter-icon" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+        <div class="nav-filter-titles">
+          <span class="nav-filter-label">Ana Grup</span>
+        </div>
+        <span class="nav-filter-count-badge" id="anagrp-count" style="display:none">0</span>
+        <svg class="nav-filter-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="nav-filter-body">
+        <div class="nav-anagrp-item" id="ag-item-Aksesuar">
+          <div class="nav-anagrp-head" onclick="setAnaGrupSidebar('Aksesuar')">
+            <div class="nav-cin-check"></div>
+            <span>Aksesuar</span>
+            <svg class="nav-anagrp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;margin-left:auto;flex-shrink:0;transition:transform 0.2s;" onclick="event.stopPropagation(); toggleAnaGrupExpand('Aksesuar')"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+          <div class="nav-anagrp-sub" id="ag-sub-Aksesuar"></div>
+        </div>
+
+        <div class="nav-anagrp-item" id="ag-item-Ayakkabı">
+          <div class="nav-anagrp-head" onclick="setAnaGrupSidebar('Ayakkabı')">
+            <div class="nav-cin-check"></div>
+            <span>Ayakkabı</span>
+            <svg class="nav-anagrp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;margin-left:auto;flex-shrink:0;transition:transform 0.2s;" onclick="event.stopPropagation(); toggleAnaGrupExpand('Ayakkabı')"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+          <div class="nav-anagrp-sub" id="ag-sub-Ayakkabı"></div>
+        </div>
+
+        <div class="nav-anagrp-item" id="ag-item-Giyim">
+          <div class="nav-anagrp-head" onclick="setAnaGrupSidebar('Giyim')">
+            <div class="nav-cin-check"></div>
+            <span>Giyim</span>
+            <svg class="nav-anagrp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;margin-left:auto;flex-shrink:0;transition:transform 0.2s;" onclick="event.stopPropagation(); toggleAnaGrupExpand('Giyim')"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+          <div class="nav-anagrp-sub" id="ag-sub-Giyim"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-filter-group" id="fg-cinsiyet">
+      <div class="nav-filter-head" onclick="toggleNavFilter('fg-cinsiyet')">
+        <svg class="nav-filter-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <div class="nav-filter-titles">
+          <span class="nav-filter-label">Cinsiyet</span>
+        </div>
+        <span class="nav-filter-count-badge" id="cinsiyet-count" style="display:none">0</span>
+        <svg class="nav-filter-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="nav-filter-body">
+        <div class="nav-cin-item" onclick="setCinsiyet('Kadın')" data-val="Kadın"><div class="nav-cin-check"></div>Kadın</div>
+        <div class="nav-cin-item" onclick="setCinsiyet('Erkek')" data-val="Erkek"><div class="nav-cin-check"></div>Erkek</div>
+        <div class="nav-cin-item" onclick="setCinsiyet('Unisex')" data-val="Unisex"><div class="nav-cin-check"></div>Unisex</div>
+        <div class="nav-cin-item" onclick="setCinsiyet('Çocuk')" data-val="Çocuk"><div class="nav-cin-check"></div>Çocuk</div>
+        <div class="nav-cin-item" onclick="setCinsiyet('Bebek')" data-val="Bebek"><div class="nav-cin-check"></div>Bebek</div>
+        <div class="nav-cin-item" onclick="setCinsiyet('Kız Çocuk')" data-val="Kız Çocuk"><div class="nav-cin-check"></div>Kız Çocuk</div>
+        <div class="nav-cin-item" onclick="setCinsiyet('Erkek Çocuk')" data-val="Erkek Çocuk"><div class="nav-cin-check"></div>Erkek Çocuk</div>
+      </div>
+    </div>
+
+    <div class="nav-filter-group" id="fg-marka" style="display:none">
+      <div class="nav-filter-head" onclick="toggleNavFilter('fg-marka')">
+        <svg class="nav-filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <div class="nav-filter-titles">
+          <span class="nav-filter-label">Marka</span>
+        </div>
+        <span class="nav-filter-count-badge" id="marka-count" style="display:none">0</span>
+        <svg class="nav-filter-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="nav-filter-body" id="fg-marka-body"></div>
+    </div>
+
+    <div class="nav-filter-group" id="fg-donem">
+      <div class="nav-filter-head" onclick="toggleNavFilter('fg-donem')">
+        <svg class="nav-filter-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div class="nav-filter-titles">
+          <span class="nav-filter-label">Dönem</span>
+        </div>
+        <svg class="nav-filter-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="nav-filter-body">
+        <div class="period-toggle-sm">
+          <button class="period-btn-sm active" id="pb-hafta" onclick="setPeriod('hafta',this)">Haftalık</button>
+          <button class="period-btn-sm" id="pb-ay" onclick="setPeriod('ay',this)">Aylık</button>
+        </div>
+        <select class="nav-filter-select" id="donem-select" onchange="updateFilterSummaries(); loadData()"></select>
+      </div>
+    </div>
+
+    <div class="nav-filter-group" id="fg-sezon">
+      <div class="nav-filter-head" onclick="toggleNavFilter('fg-sezon')">
+        <svg class="nav-filter-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <div class="nav-filter-titles">
+          <span class="nav-filter-label">Sezon</span>
+        </div>
+        <span class="nav-filter-count-badge" id="sezon-count" style="display:none">0</span>
+        <svg class="nav-filter-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="nav-filter-body">
+        <select class="nav-filter-select" id="sezon-select" onchange="updateFilterSummaries(); renderActiveFilterChips(); loadData()">
+          <option value="">Tüm Sezonlar</option>
+        </select>
+      </div>
+    </div>
+    <div class="nav-filter-clear-row">
+      <button class="nav-filter-clear-btn" onclick="filtreSifirla()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Filtreleri Temizle
+      </button>
+    </div>
+    </div><!-- /nav-filter-acc-body -->
+  </div>
+
+  <div class="nav-bottom">
+    <div class="nav-divider"></div>
+    <div class="nav-item" onclick="cikisYap()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span class="nav-item-label">Çıkış Yap</span>
+    </div>
+    <div class="nav-compact-user" id="nav-compact-user">
+      <div class="nav-compact-avatar" id="nav-compact-avatar">?</div>
+      <div class="nav-compact-info">
+        <div class="nav-compact-role" id="nav-compact-role">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ANA İÇERİK -->
+<div class="app-body">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard <span>Satış Analiz Paneli</span></div>
+    <div class="topbar-actions">
+
+      <!-- BİLDİRİM ZİLİ -->
+      <div class="bildirim-wrap" id="bildirim-wrap" onclick="bildirimDropdownAc(event)">
+        <button class="bildirim-btn" id="bildirim-btn" title="Bildirimler" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="bildirim-badge" id="bildirim-badge" style="display:none">0</span>
+        </button>
+        <div class="bildirim-dropdown" onclick="event.stopPropagation()">
+          <div class="bildirim-dropdown-header">
+            <span class="bildirim-dropdown-baslik">Bildirimler</span>
+          </div>
+          <div class="bildirim-panel" id="bildirim-panel">
+            <div class="bildirim-bos">Yükleniyor…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-user" id="topbar-user" onclick="toggleUserDropdown(event)">
+        <div class="user-avatar" id="user-avatar" style="font-size:11px;font-weight:700">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span class="user-name" id="user-name-text">Kullanıcı</span>
+        <svg class="topbar-user-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        <div class="user-dropdown" id="user-dropdown" onclick="event.stopPropagation()">
+          <div class="user-dropdown-header">
+            <div class="user-dropdown-name" id="dd-user-name">—</div>
+            <div class="user-dropdown-email" id="dd-user-email">—</div>
+          </div>
+          <button class="user-dropdown-item" id="dd-ayarlar" onclick="ddNav('profil')">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Ayarlar
+          </button>
+          <div class="user-dropdown-divider"></div>
+          <button class="user-dropdown-item danger" onclick="cikisYap()">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Çıkış Yap
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AKTİF FİLTRE BANDI (topbar altı) -->
+  <div class="active-filter-row" id="active-filter-row" style="display:none">
+    <span class="active-filter-label">Aktif:</span>
+    <div class="active-filter-bar" id="active-filter-bar"></div>
+  </div>
+
+  <div class="page-content">
+  <div class="content-wrap">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard">
+      <div class="welcome-banner" id="welcome-banner">
+        <div class="welcome-text">
+          <h2 id="welcome-heading">Hoş geldiniz</h2>
+          <p>Güncel satış verilerinizi ve analizlerinizi aşağıda bulabilirsiniz.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <div class="welcome-date">
+            <strong id="welcome-day">—</strong>
+            <span id="welcome-datestr">—</span>
+          </div>
+          <button class="welcome-dismiss" onclick="dismissWelcome()">Kapat</button>
+        </div>
+      </div>
+
+      <div class="metrics-row" id="metrics-bar">
+        <div class="metric-card">
+          <div class="metric-label">Toplam Satış</div>
+          <div class="metric-val" id="m-satis">—</div>
+          <div class="metric-footer">
+            <span class="metric-sub">adet</span>
+            <span class="metric-change neutral" id="m-satis-change"></span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Toplam Ciro</div>
+          <div class="metric-val" id="m-ciro">—</div>
+          <div class="metric-footer">
+            <span class="metric-sub">bu dönem</span>
+            <span class="metric-change neutral" id="m-ciro-change"></span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Toplam Kâr</div>
+          <div class="metric-val" id="m-kar">—</div>
+          <div class="metric-footer">
+            <span class="metric-sub">bu dönem</span>
+            <span class="metric-change neutral" id="m-kar-change"></span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Ort. Sell Through</div>
+          <div class="metric-val" id="m-st">—</div>
+          <div class="metric-footer">
+            <span class="metric-sub">sezon ort.</span>
+            <span class="metric-change neutral" id="m-st-change"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-dot bs-dot" style="background:#16a34a"></div>
+            <div class="panel-title bs-title" style="color:#15803d">Best Seller</div>
+            <div class="panel-sub" id="bs-sub">—</div>
+          </div>
+          <div class="table-header">
+            <div class="th" style="width:16px">#</div>
+            <div class="th" style="width:32px"></div>
+            <div class="th name">Ürün</div>
+            <div class="th num">PSF</div>
+            <div class="th score">ST%</div>
+          </div>
+          <div id="bs-list" class="panel-list-scroll"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-dot ws-dot" style="background:#E63030"></div>
+            <div class="panel-title ws-title" style="color:#E63030">Worst Seller</div>
+            <div class="panel-sub" id="ws-sub">—</div>
+          </div>
+          <div class="table-header">
+            <div class="th" style="width:16px">#</div>
+            <div class="th" style="width:32px"></div>
+            <div class="th name">Ürün</div>
+            <div class="th num">PSF</div>
+            <div class="th score">Cover</div>
+          </div>
+          <div id="ws-list" class="panel-list-scroll"></div>
+        </div>
+      </div>
+
+      <div class="analiz-grid">
+        <div class="analiz-row">
+          <!-- Sol: En Çok Satan Ürünler — lollipop -->
+          <div class="chart-card analiz-lollipop-card lol-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title-wrap">
+                <div class="chart-card-title">En Çok Satan Ürünler</div>
+                <div class="chart-card-subtitle">Satış adedine göre ürünler</div>
+              </div>
+            </div>
+            <div class="lol-list" id="lol-list"></div>
+          </div>
+          <!-- Sağ: Popüler Kategoriler — donut -->
+          <div class="chart-card analiz-donut-card" style="flex:1">
+            <div class="chart-card-header">
+              <div class="chart-card-title-wrap">
+                <div class="chart-card-title" id="donut-chart-title">Popüler Kategoriler</div>
+                <div class="chart-card-subtitle">Satış adedine göre dağılım</div>
+              </div>
+            </div>
+            <div class="donut-wrap">
+              <div class="donut-canvas-wrap"><canvas id="donut-chart"></canvas></div>
+              <div class="donut-legend" id="donut-legend"></div>
+            </div>
+          </div>
+        </div>
+        <div class="analiz-row">
+          <!-- En Çok Ciro — sol -->
+          <div class="chart-card analiz-bar-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title-wrap">
+                <div class="chart-card-title">En Çok Ciro Getiren Ürünler</div>
+                <div class="chart-card-subtitle" id="ciro-chart-subtitle">Ciro katkısı en yüksek 10 ürün · ST&gt;%55 · Cover&lt;10 hafta</div>
+              </div>
+            </div>
+            <div class="chart-wrap-lg"><canvas id="ciro-chart"></canvas></div>
+          </div>
+          <!-- En Kârlı — sağ -->
+          <div class="chart-card analiz-bar-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title-wrap">
+                <div class="chart-card-title">En Kârlı Ürünler</div>
+                <div class="chart-card-subtitle" id="karli-chart-subtitle">Brüt kâr katkısı en yüksek 10 ürün · ST&gt;%55 · Cover&lt;12 hafta</div>
+              </div>
+            </div>
+            <div class="chart-wrap-md"><canvas id="karli-chart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="chart-card analiz-full">
+          <div class="chart-card-header"><div class="chart-card-title">Kategori Performansı</div></div>
+          <div class="kat-scroll">
+            <table class="kat-table">
+              <colgroup>
+                <col class="kat-col-kat">
+                <col class="kat-col-satis">
+                <col class="kat-col-ciro">
+                <col class="kat-col-kar">
+                <col class="kat-col-mu">
+                <col class="kat-col-st">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Alt Kategori</th>
+                  <th>Satış Adedi</th>
+                  <th>Toplam Ciro</th>
+                  <th>Toplam Kâr</th>
+                  <th>Ort. MU</th>
+                  <th>Sell Through</th>
+                </tr>
+              </thead>
+              <tbody id="kat-perf-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="chart-card analiz-full">
+          <div class="chart-card-header">
+            <div class="chart-card-title-wrap">
+              <div class="chart-card-title">Marka Performansı</div>
+              <div class="chart-card-subtitle">Sell-Through × GMROI · balon boyutu ciro payını gösterir</div>
+            </div>
+          </div>
+          <div style="height:480px;position:relative"><canvas id="marka-bar-chart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP 10 KARTLAR -->
+    <div id="page-kartlar" style="display:none">
+
+      <div class="kartlar-toolbar" id="kartlar-toolbar">
+        <div class="kartlar-toolbar-sort">
+          <span class="kartlar-sort-label">Sırala</span>
+          <div class="sort-pills" role="radiogroup" aria-label="Sıralama Kriteri">
+            <button class="sort-pill active" role="radio" aria-checked="true"  onclick="setSortBy('skor', this)" data-val="skor">Genel</button>
+            <button class="sort-pill"        role="radio" aria-checked="false" onclick="setSortBy('st', this)"   data-val="st">ST</button>
+            <button class="sort-pill"        role="radio" aria-checked="false" onclick="setSortBy('gmroi', this)" data-val="gmroi">GMROI</button>
+            <button class="sort-pill"        role="radio" aria-checked="false" onclick="setSortBy('cover', this)" data-val="cover">Cover</button>
+          </div>
+        </div>
+        <button id="btn-export-top10" class="btn-mini" onclick="exportTop10Excel()" title="Mevcut filtrelere göre Best Seller ve Worst Seller listesini Excel olarak indir" style="display:flex;align-items:center;gap:5px;color:#16a34a;border-color:#bbf7d0;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Excel İndir
+        </button>
+      </div>
+
+      <div id="panel-bs-cards"><div class="cards-grid" id="bs-cards"></div></div>
+      <div id="panel-ws-cards" style="display:none"><div class="cards-grid" id="ws-cards"></div></div>
+    </div>
+
+
+    <!-- AYARLAR SAYFASI — tab yapısı, role göre sekme gizleme -->
+    <div id="page-profil" style="display:none">
+      <div style="max-width:1080px">
+
+        <!-- Sekme çubuğu -->
+        <div class="tabs">
+          <button class="tab active" data-tab="genel" onclick="ayarTabSec('genel', this)">Genel Ayarlar</button>
+          <button class="tab" data-tab="kullanici" style="display:none" onclick="ayarTabSec('kullanici', this)">Kullanıcı Yönetimi</button>
+          <button class="tab" data-tab="sistem" style="display:none" onclick="ayarTabSec('sistem', this)">Sistem Parametreleri</button>
+        </div>
+
+        <!-- ── Tab: Genel Ayarlar ── -->
+        <div id="tab-genel">
+          <div style="max-width:680px">
+
+            <div class="card">
+              <div class="card-header"><span class="card-title">Hesap Bilgileri</span></div>
+              <div class="card-body">
+                <div class="kv-row">
+                  <span class="kv-label">E-posta</span>
+                  <span class="kv-val" id="profil-email">—</span>
+                </div>
+                <div class="kv-row">
+                  <span class="kv-label">Rol</span>
+                  <span class="role-pill" id="profil-rol-badge">—</span>
+                </div>
+                <div class="kv-row" style="border:none;padding-bottom:0">
+                  <span class="kv-label">Ad Soyad</span>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <input type="text" class="input-text" id="profil-ad" disabled style="width:200px">
+                    <button class="btn" id="profil-ad-btn" onclick="toggleAdEdit()">Değiştir</button>
+                  </div>
+                </div>
+                <div id="profil-bilgi-msg" class="profil-msg"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><span class="card-title">Görünüm</span></div>
+              <div class="card-body">
+                <div class="toggle-row">
+                  <div class="toggle-meta">
+                    <span>Karanlık Mod</span>
+                    <span>Düşük ışık ortamları için koyu renk teması</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkModePref(this)">
+                    <span class="switch-track"></span>
+                  </label>
+                </div>
+                <div class="toggle-row" style="padding-top:10px;border-top:1px solid var(--border)">
+                  <div class="toggle-meta">
+                    <span>Filtreleri Hatırla</span>
+                    <span>Son kullanılan filtreleri otomatik uygula</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="hatirla-filtre-toggle" onchange="toggleHatirlaFiltrePref(this)">
+                    <span class="switch-track"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><span class="card-title">Şifre Değiştir</span></div>
+              <div class="card-body" style="gap:10px">
+                <div class="field">
+                  <label class="field-label">Mevcut Şifre</label>
+                  <div class="input-pwd-wrap">
+                    <input type="password" class="input-text" id="profil-sifre-eski" placeholder="••••••••" autocomplete="new-password">
+                    <button type="button" class="input-pwd-toggle" onclick="togglePwd('profil-sifre-eski',this)">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="pwd-grid">
+                  <div class="field">
+                    <label class="field-label">Yeni Şifre</label>
+                    <div class="input-pwd-wrap">
+                      <input type="password" class="input-text" id="profil-sifre-yeni" placeholder="••••••••" autocomplete="new-password">
+                      <button type="button" class="input-pwd-toggle" onclick="togglePwd('profil-sifre-yeni',this)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label class="field-label">Yeni Şifre (Tekrar)</label>
+                    <div class="input-pwd-wrap">
+                      <input type="password" class="input-text" id="profil-sifre-tekrar" placeholder="••••••••" autocomplete="new-password">
+                      <button type="button" class="input-pwd-toggle" onclick="togglePwd('profil-sifre-tekrar',this)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div id="profil-sifre-msg" class="profil-msg"></div>
+                <div style="display:flex;justify-content:flex-end">
+                  <button class="btn btn-primary" onclick="sifreDegistir()">Şifreyi Güncelle</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Tab: Kullanıcı Yönetimi (yönetici) ── -->
+        <div id="tab-kullanici" style="display:none">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Sistem Kullanıcıları</span>
+              <div style="font-size:11px;color:var(--text-light);margin-top:3px">Erişim yetkilerini ve kullanıcı durumlarını yönetin.</div>
+            </div>
+            <div class="card-body" style="gap:0;padding:0">
+              <!-- Davet formu -->
+              <div style="padding:16px 20px 14px;border-bottom:1px solid var(--border);background:var(--bg)">
+                <div style="display:grid;grid-template-columns:1fr 1.4fr 0.8fr auto;gap:10px;align-items:end">
+                  <div class="field">
+                    <label class="field-label">Ad Soyad</label>
+                    <input type="text" class="input-text" id="yeni-ad" autocomplete="nope" data-form-type="other">
+                  </div>
+                  <div class="field">
+                    <label class="field-label">E-posta</label>
+                    <input type="text" class="input-text" id="yeni-email" placeholder="ornek@sporthink.com" autocomplete="nope" data-form-type="other">
+                  </div>
+                  <div class="field">
+                    <label class="field-label">Rol</label>
+                    <select class="input-text" id="yeni-rol" style="cursor:pointer">
+                      <option value="" disabled selected>Seçiniz</option>
+                      <option value="kullanici">Kullanıcı</option>
+                      <option value="yonetici">Yönetici</option>
+                    </select>
+                  </div>
+                  <button class="btn btn-primary" onclick="kullaniciDavetEt()">Davet Et</button>
+                </div>
+                <div id="davet-msg" class="profil-msg" style="margin-top:8px"></div>
+              </div>
+              <!-- Tablo -->
+              <div style="padding:0 20px 16px">
+                <table class="ku-tablo">
+                  <colgroup><col><col><col><col><col></colgroup>
+                  <thead>
+                    <tr>
+                      <th>Ad Soyad</th>
+                      <th>E-posta</th>
+                      <th class="tc">Yetki</th>
+                      <th class="tc">Durum</th>
+                      <th class="tr">İşlem</th>
+                    </tr>
+                  </thead>
+                  <tbody id="kullanici-liste"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Tab: Sistem Parametreleri (yönetici) ── -->
+        <div id="tab-sistem" style="display:none">
+          <div class="sis-wrap">
+
+            <!-- 1 — Veri Ortamı -->
+            <div class="sis-section">
+              <div class="sis-section-head">
+                <div class="sis-num">1</div>
+                <div class="sis-section-titles">
+                  <div class="sis-section-title">Veri Ortamı</div>
+                  <div class="sis-section-sub">Dashboard'ın çalıştığı aktif veri setini yapılandırın</div>
+                </div>
+              </div>
+              <div class="sis-section-body">
+                <!-- KPI şeridi -->
+                <div class="sis-vo-stats">
+                  <div class="sis-vo-stat"><div class="sis-vo-val" id="sys-urun">—</div><div class="sis-vo-lbl">Ürün</div></div>
+                  <div class="sis-vo-sep"></div>
+                  <div class="sis-vo-stat"><div class="sis-vo-val" id="sys-kategori">—</div><div class="sis-vo-lbl">Kategori</div></div>
+                  <div class="sis-vo-sep"></div>
+                  <div class="sis-vo-stat"><div class="sis-vo-val" id="sys-marka">—</div><div class="sis-vo-lbl">Marka</div></div>
+                  <div class="sis-vo-sep"></div>
+                  <div class="sis-vo-stat"><div class="sis-vo-val" id="sys-hafta">—</div><div class="sis-vo-lbl">Hafta</div></div>
+                  <div class="sis-vo-sep"></div>
+                  <div class="sis-vo-stat"><div class="sis-vo-val" id="sys-kullanici">—</div><div class="sis-vo-lbl">Kullanıcı</div></div>
+                </div>
+                <!-- Sezon seçici -->
+                <div class="sis-vo-sezon-header">
+                  <span class="sis-vo-sezon-lbl">Aktif Sezon Koleksiyonu</span>
+                  <span id="vo-sezon-aralik" style="display:none"></span>
+                </div>
+                <div id="sezon-chips-wrap" class="vo-sezon-cards sis-vo-chips"></div>
+                <!-- Footer -->
+                <div class="sis-section-foot" style="justify-content:flex-end">
+                  <button class="sis-btn-primary" onclick="sezonUygula()">Uygula</button>
+                </div>
+                <!-- Gizli yardımcılar -->
+                <div id="sezon-msg" class="profil-msg" style="display:none;margin-top:8px"></div>
+                <span id="aktif-sezon-text" style="display:none">—</span>
+                <span id="sys-baslangic" style="display:none">—</span>
+                <span id="sys-bitis" style="display:none">—</span>
+              </div>
+            </div>
+
+            <!-- 2 — Sıralama Parametreleri -->
+            <div class="sis-section">
+              <div class="sis-section-head">
+                <div class="sis-num">2</div>
+                <div class="sis-section-titles">
+                  <div class="sis-section-title">Sıralama Parametreleri</div>
+                  <div class="sis-section-sub">Best/Worst Seller algoritmasının ağırlık dağılımı</div>
+                </div>
+              </div>
+              <div class="sis-section-body">
+                <div class="sis-sp-grid">
+                  <!-- GMROI -->
+                  <div class="sis-sp-card">
+                    <div class="sis-sp-top">
+                      <span class="sis-sp-name">GMROI</span>
+                      <div class="sis-sp-val-group">
+                        <input type="number" class="sis-sp-input" id="sp-num-gmroi" min="0" max="100" value="40"
+                               oninput="spSyncFromNum('gmroi')" onblur="spClamp('gmroi')" onkeydown="if(event.key==='Enter')spClamp('gmroi')">
+                        <div class="sis-sp-spins">
+                          <button class="sis-sp-spin" onclick="spStep('gmroi',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-sp-spin" onclick="spStep('gmroi',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                        <span class="sis-sp-pct">%</span>
+                      </div>
+                    </div>
+                    <div class="sis-sp-track-wrap">
+                      <div class="sis-sp-track-bg"></div>
+                      <div class="sis-sp-track-fill" id="sp-fill-gmroi" style="width:40%"></div>
+                      <input type="range" class="sp-sc-range" min="0" max="100" step="1" value="40" id="ayar-gmroi"
+                             oninput="updateAyarSliders();updateSpStack();spSyncFromRange('gmroi')">
+                    </div>
+                  </div>
+                  <!-- Sell Through -->
+                  <div class="sis-sp-card">
+                    <div class="sis-sp-top">
+                      <span class="sis-sp-name">Sell Through</span>
+                      <div class="sis-sp-val-group">
+                        <input type="number" class="sis-sp-input" id="sp-num-st" min="0" max="100" value="35"
+                               oninput="spSyncFromNum('st')" onblur="spClamp('st')" onkeydown="if(event.key==='Enter')spClamp('st')">
+                        <div class="sis-sp-spins">
+                          <button class="sis-sp-spin" onclick="spStep('st',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-sp-spin" onclick="spStep('st',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                        <span class="sis-sp-pct">%</span>
+                      </div>
+                    </div>
+                    <div class="sis-sp-track-wrap">
+                      <div class="sis-sp-track-bg"></div>
+                      <div class="sis-sp-track-fill" id="sp-fill-st" style="width:35%"></div>
+                      <input type="range" class="sp-sc-range" min="0" max="100" step="1" value="35" id="ayar-st"
+                             oninput="updateAyarSliders();updateSpStack();spSyncFromRange('st')">
+                    </div>
+                  </div>
+                  <!-- Cover -->
+                  <div class="sis-sp-card">
+                    <div class="sis-sp-top">
+                      <span class="sis-sp-name">Cover</span>
+                      <div class="sis-sp-val-group">
+                        <input type="number" class="sis-sp-input" id="sp-num-cover" min="0" max="100" value="25"
+                               oninput="spSyncFromNum('cover')" onblur="spClamp('cover')" onkeydown="if(event.key==='Enter')spClamp('cover')">
+                        <div class="sis-sp-spins">
+                          <button class="sis-sp-spin" onclick="spStep('cover',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-sp-spin" onclick="spStep('cover',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                        <span class="sis-sp-pct">%</span>
+                      </div>
+                    </div>
+                    <div class="sis-sp-track-wrap">
+                      <div class="sis-sp-track-bg"></div>
+                      <div class="sis-sp-track-fill" id="sp-fill-cover" style="width:25%"></div>
+                      <input type="range" class="sp-sc-range" min="0" max="100" step="1" value="25" id="ayar-cover"
+                             oninput="updateAyarSliders();updateSpStack();spSyncFromRange('cover')">
+                    </div>
+                  </div>
+                </div>
+                <!-- Footer -->
+                <div class="sis-section-foot">
+                  <div class="sis-sp-total">
+                    <span class="sis-sp-total-lbl">Toplam:</span>
+                    <span class="sis-sp-total-num" id="sp-total-num" style="color:#16A34A">100%</span>
+                    <span class="sis-sp-total-status" id="sp-total-status" style="color:#16A34A">✓ dengeli</span>
+                  </div>
+                  <div style="display:flex;gap:6px">
+                    <button class="sis-btn-ghost" onclick="spSifirla()">Sıfırla</button>
+                    <button class="sis-btn-primary" onclick="ayarlariKaydet()">Uygula</button>
+                  </div>
+                </div>
+                <!-- Gizli uyumluluk elementleri -->
+                <span id="ayar-v-gmroi" style="display:none">40</span>
+                <span id="ayar-v-st" style="display:none">35</span>
+                <span id="ayar-v-cover" style="display:none">25</span>
+                <div style="display:none">
+                  <div class="slider-toplam"><strong id="ayar-toplam">100</strong><span class="slider-check"></span></div>
+                  <div id="sp-seg-gmroi"></div><div id="sp-seg-st"></div><div id="sp-seg-cover"></div>
+                  <div id="sp-leg-gmroi">40</div><div id="sp-leg-st">35</div><div id="sp-leg-cover">25</div>
+                  <span id="sp-legend-ok"></span>
+                </div>
+                <div id="ayar-msg" class="profil-msg"></div>
+              </div>
+            </div>
+
+            <!-- 3 — Grafik Eşikleri -->
+            <div class="sis-section">
+              <div class="sis-section-head">
+                <div class="sis-num">3</div>
+                <div class="sis-section-titles">
+                  <div class="sis-section-title">Grafik Eşikleri</div>
+                  <div class="sis-section-sub">Her grafik için ayrı Min Sell Through ve Max Cover değerleri</div>
+                </div>
+              </div>
+              <div class="sis-section-body">
+                <div class="sis-ge-rows">
+                  <!-- BS -->
+                  <div class="sis-ge-row sis-ge-row-bs" style="border-left-color:#16A34A">
+                    <span class="sis-ge-chip" style="color:#16A34A;background:rgba(22,163,74,0.12)">BS</span>
+                    <span class="sis-ge-title">Best Seller Listesi</span>
+                    <div class="sis-ge-inputs">
+                    <div class="sis-ge-field">
+                      <span class="sis-ge-lbl">Min ST</span>
+                      <div class="sis-ms" style="border-color:rgba(22,163,74,0.3)">
+                        <input type="number" class="sis-ms-num" id="esik-min-st" value="55" min="0" max="100" onblur="geClamp('esik-min-st')" onkeydown="if(event.key==='Enter')geClamp('esik-min-st')">
+                        <div class="sis-ms-spins">
+                          <button class="sis-ms-spin" style="border-color:rgba(22,163,74,0.4);color:#16A34A" onclick="geSpin('esik-min-st',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-ms-spin" style="border-color:rgba(22,163,74,0.4);color:#16A34A" onclick="geSpin('esik-min-st',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                      </div>
+                      <span class="sis-ge-suffix">%</span>
+                    </div>
+                    <div class="sis-ge-field">
+                      <span class="sis-ge-lbl">Max Cover</span>
+                      <div class="sis-ms" style="border-color:rgba(22,163,74,0.3)">
+                        <input type="number" class="sis-ms-num" id="esik-max-cover" value="12" min="1" max="52" onblur="geClamp('esik-max-cover')" onkeydown="if(event.key==='Enter')geClamp('esik-max-cover')">
+                        <div class="sis-ms-spins">
+                          <button class="sis-ms-spin" style="border-color:rgba(22,163,74,0.4);color:#16A34A" onclick="geSpin('esik-max-cover',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-ms-spin" style="border-color:rgba(22,163,74,0.4);color:#16A34A" onclick="geSpin('esik-max-cover',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                      </div>
+                      <span class="sis-ge-suffix">hf</span>
+                    </div>
+                    </div>
+                  </div>
+                  <!-- CİRO -->
+                  <div class="sis-ge-row sis-ge-row-ciro" style="border-left-color:#C0392B">
+                    <span class="sis-ge-chip" style="color:#C0392B;background:rgba(192,57,43,0.12)">CİRO</span>
+                    <span class="sis-ge-title">En Çok Ciro Getiren Ürünler</span>
+                    <div class="sis-ge-inputs">
+                    <div class="sis-ge-field">
+                      <span class="sis-ge-lbl">Min ST</span>
+                      <div class="sis-ms" style="border-color:rgba(192,57,43,0.3)">
+                        <input type="number" class="sis-ms-num" id="ge-ciro-st" value="55" min="0" max="100" onblur="geClamp('ge-ciro-st')" onkeydown="if(event.key==='Enter')geClamp('ge-ciro-st')">
+                        <div class="sis-ms-spins">
+                          <button class="sis-ms-spin" style="border-color:rgba(192,57,43,0.4);color:#C0392B" onclick="geSpin('ge-ciro-st',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-ms-spin" style="border-color:rgba(192,57,43,0.4);color:#C0392B" onclick="geSpin('ge-ciro-st',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                      </div>
+                      <span class="sis-ge-suffix">%</span>
+                    </div>
+                    <div class="sis-ge-field">
+                      <span class="sis-ge-lbl">Max Cover</span>
+                      <div class="sis-ms" style="border-color:rgba(192,57,43,0.3)">
+                        <input type="number" class="sis-ms-num" id="esik-ciro-cover" value="10" min="1" max="52" onblur="geClamp('esik-ciro-cover')" onkeydown="if(event.key==='Enter')geClamp('esik-ciro-cover')">
+                        <div class="sis-ms-spins">
+                          <button class="sis-ms-spin" style="border-color:rgba(192,57,43,0.4);color:#C0392B" onclick="geSpin('esik-ciro-cover',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-ms-spin" style="border-color:rgba(192,57,43,0.4);color:#C0392B" onclick="geSpin('esik-ciro-cover',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                      </div>
+                      <span class="sis-ge-suffix">hf</span>
+                    </div>
+                    </div>
+                  </div>
+                  <!-- KÂR -->
+                  <div class="sis-ge-row sis-ge-row-kar" style="border-left-color:#2563EB">
+                    <span class="sis-ge-chip" style="color:#2563EB;background:rgba(37,99,235,0.12)">KÂR</span>
+                    <span class="sis-ge-title">En Kârlı Ürünler</span>
+                    <div class="sis-ge-inputs">
+                    <div class="sis-ge-field">
+                      <span class="sis-ge-lbl">Min ST</span>
+                      <div class="sis-ms" style="border-color:rgba(37,99,235,0.3)">
+                        <input type="number" class="sis-ms-num" id="ge-kar-st" value="55" min="0" max="100" onblur="geClamp('ge-kar-st')" onkeydown="if(event.key==='Enter')geClamp('ge-kar-st')">
+                        <div class="sis-ms-spins">
+                          <button class="sis-ms-spin" style="border-color:rgba(37,99,235,0.4);color:#2563EB" onclick="geSpin('ge-kar-st',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-ms-spin" style="border-color:rgba(37,99,235,0.4);color:#2563EB" onclick="geSpin('ge-kar-st',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                      </div>
+                      <span class="sis-ge-suffix">%</span>
+                    </div>
+                    <div class="sis-ge-field">
+                      <span class="sis-ge-lbl">Max Cover</span>
+                      <div class="sis-ms" style="border-color:rgba(37,99,235,0.3)">
+                        <input type="number" class="sis-ms-num" id="ge-kar-cover" value="10" min="1" max="52" onblur="geClamp('ge-kar-cover')" onkeydown="if(event.key==='Enter')geClamp('ge-kar-cover')">
+                        <div class="sis-ms-spins">
+                          <button class="sis-ms-spin" style="border-color:rgba(37,99,235,0.4);color:#2563EB" onclick="geSpin('ge-kar-cover',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-ms-spin" style="border-color:rgba(37,99,235,0.4);color:#2563EB" onclick="geSpin('ge-kar-cover',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                      </div>
+                      <span class="sis-ge-suffix">hf</span>
+                    </div>
+                    </div>
+                  </div>
+                  <!-- MARKA -->
+                  <div class="sis-ge-row sis-ge-row-mrk" style="border-left-color:#7C3AED">
+                    <span class="sis-ge-chip" style="color:#7C3AED;background:rgba(124,58,237,0.12)">MRK</span>
+                    <span class="sis-ge-title">Marka Performansı Grafiği</span>
+                    <div class="sis-ge-inputs">
+                    <div class="sis-ge-field">
+                      <span class="sis-ge-lbl">Min ST</span>
+                      <div class="sis-ms" style="border-color:rgba(124,58,237,0.3)">
+                        <input type="number" class="sis-ms-num" id="marka-st-cut" value="50" min="0" max="100" onblur="geClamp('marka-st-cut')" onkeydown="if(event.key==='Enter')geClamp('marka-st-cut')">
+                        <div class="sis-ms-spins">
+                          <button class="sis-ms-spin" style="border-color:rgba(124,58,237,0.4);color:#7C3AED" onclick="geSpin('marka-st-cut',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-ms-spin" style="border-color:rgba(124,58,237,0.4);color:#7C3AED" onclick="geSpin('marka-st-cut',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                      </div>
+                      <span class="sis-ge-suffix">%</span>
+                    </div>
+                    <div class="sis-ge-field">
+                      <span class="sis-ge-lbl">Min GMROI</span>
+                      <div class="sis-ms" style="border-color:rgba(124,58,237,0.3)">
+                        <input type="number" class="sis-ms-num" id="marka-gm-cut" value="15" min="1" max="100" onblur="geClamp('marka-gm-cut')" onkeydown="if(event.key==='Enter')geClamp('marka-gm-cut')">
+                        <div class="sis-ms-spins">
+                          <button class="sis-ms-spin" style="border-color:rgba(124,58,237,0.4);color:#7C3AED" onclick="geSpin('marka-gm-cut',1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+                          <button class="sis-ms-spin" style="border-color:rgba(124,58,237,0.4);color:#7C3AED" onclick="geSpin('marka-gm-cut',-1)"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                        </div>
+                      </div>
+                      <span class="sis-ge-suffix"></span>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" id="esik-risk" value="15">
+                <!-- Footer -->
+                <div class="sis-section-foot" style="justify-content:flex-end">
+                  <button class="sis-btn-ghost" onclick="esikSifirla();geSifirla()">Varsayılana Dön</button>
+                  <button class="sis-btn-primary" onclick="esikleriKaydet()">Eşikleri Uygula</button>
+                </div>
+                <div id="esik-msg" class="profil-msg" style="margin-top:8px"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /content-wrap -->
+  </div><!-- /page-content -->
+</div><!-- /app-body -->
+
+<!-- KULLANICI SİLME ONAY MODAL -->
+<div class="modal-overlay" id="silme-modal">
+  <div class="modal" style="width:400px">
+    <div class="modal-header" style="padding:20px 24px 16px">
+      <div class="modal-title" style="color:var(--red)">Kullanıcıyı Kalıcı Sil</div>
+      <button class="modal-close" onclick="silmeModalKapat()" style="font-size:18px">×</button>
+    </div>
+    <div class="modal-body" style="padding:0 24px 24px;flex-direction:column;gap:0">
+      <p id="silme-modal-mesaj" style="font-size:13px;color:var(--text-dark);margin-bottom:20px;line-height:1.6">Bu kullanıcı kalıcı olarak silinecek. Devam etmek istiyor musunuz?</p>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onclick="silmeModalKapat()" class="btn">Vazgeç</button>
+        <button onclick="silmeOnaylaAction()" class="silme-confirm-btn" style="background:#e02020;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Kalıcı Olarak Sil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STOK RİSK MODAL -->
+<div class="modal-overlay" id="stok-modal">
+  <div class="stok-modal">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--red)">⚠ Stok Riski Olan Ürünler</div>
+      <button class="modal-close" onclick="document.getElementById('stok-modal').classList.remove('open')" style="font-size:18px">×</button>
+    </div>
+    <div class="modal-body" id="risk-list" style="padding:16px 20px"></div>
+  </div>
+</div>
+
+<!-- ÜRÜN DETAY MODAL -->
+<div class="modal-overlay" id="urun-modal">
+  <div class="modal">
+    <div class="modal-header" style="padding:12px 16px;">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="urun-modal-tip-badge" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px"></span>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('urun-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-img" id="urun-modal-img-wrap" style="display:none"><img id="urun-modal-img" src=""></div>
+      <div class="modal-details" id="urun-modal-detay"></div>
+    </div>
+  </div>
+</div>
+
+<div class="marka-tt" id="marka-tt"></div>
+<div class="lollipop-tt" id="lollipop-tt"></div>
+<script src="{{ url_for('static', filename='js/globals.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/ui_utils.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/ayarlar.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/kullanicilar.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/filtreler.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/charts-theme.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/charts-load.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/charts-dashboard.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/charts-kartlar.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/bildirimler.js') }}?v=15"></script>
+<script src="{{ url_for('static', filename='js/nav.js') }}?v=15"></script>
+</body>
+</html>

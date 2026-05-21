@@ -1,0 +1,524 @@
+/* ============================================================================
+   KARANLIK MOD — SOFT / MATTE REVİZYONU
+   "body.dark" sınıfı body'ye eklendiğinde tüm dashboard koyu temaya geçer.
+   Mevcut açık tema değişkenleri olduğu gibi korunur; yalnızca override.
+   ============================================================================ */
+
+body.dark {
+  /* ── Marka & semantik renkler (daha düşük krom, mat his) ── */
+  --red:        #A85650;
+  --red-deep:   #7A3A35;
+  --red-soft:   #2A1A18;
+  --green:      #4E8A66;
+  --blue:       #5270A6;
+  --yellow:     #D9B470;
+  --purple:     #A78BFA;
+  --lol-amber:      #A85650;
+  --lol-amber-deep: #7A3A35;
+  --lol-amber-soft: rgba(168,86,80,0.30);
+
+  /* ── Yüzeyler (saf siyahtan ve eflatundan kaçınılır;
+        sıcak-nötr gri lacivert kaydırma) ── */
+  --bg:          #1B1B1F;
+  --card:        #232328;
+  --card-2:      #2A2A30;
+  --sidebar:     #1E1E22;
+  --topbar:      #202024;
+  --border:      #2D2D32;
+  --border-md:   #383840;
+  --border-soft: #27272B;
+
+  /* ── Metin (saf beyazdan kaçınma; sıcak kırık-beyaz) ── */
+  --black:       #DEDEDA;
+  --text-dark:   #DEDEDA;
+  --text-mid:    #B5B5B1;
+  --text-muted:  #85857F;
+  --text-light:  #5C5C58;
+
+  /* ── Gölgeler (yarıya in) ── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.15);
+  --shadow-md: 0 2px 12px rgba(0,0,0,0.20);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.28);
+
+  background: var(--bg);
+  color: var(--text-dark);
+}
+
+/* ── YAPI: SIDEBAR & TOPBAR ── */
+body.dark .nav-sidebar { background: var(--sidebar); border-right-color: var(--border); box-shadow: 2px 0 16px rgba(0,0,0,0.18); }
+body.dark .nav-sidebar::-webkit-scrollbar-thumb { background: var(--border-md); }
+body.dark .nav-header { border-bottom-color: var(--border); }
+body.dark .topbar { background: var(--topbar); border-bottom-color: var(--border); box-shadow: var(--shadow-sm); }
+body.dark .nav-divider { background: var(--border); }
+
+/* ── NAV ITEM HOVER & FİLTRELER ── */
+body.dark .nav-logo:hover { opacity: 0.82; transition: opacity 0.15s; }
+body.dark .nav-item:hover { background: rgba(255,255,255,0.025); }
+body.dark .nav-item:hover svg { stroke: var(--red) !important; }
+body.dark .nav-item:hover .nav-item-label { color: var(--red); }
+body.dark .nav-collapse-btn:hover { background: rgba(168,86,80,0.07); color: var(--red); }
+body.dark .nav-sub-item:hover { background: rgba(255,255,255,0.025); color: var(--red); }
+body.dark .nav-filter-acc-head:hover,
+body.dark .nav-filter-head:hover { background: rgba(255,255,255,0.025); }
+body.dark .nav-filter-acc-head:hover .nav-filter-icon { stroke: var(--red); }
+body.dark .nav-filter-acc-head:hover .nav-filter-acc-label { color: var(--red); }
+body.dark .nav-filter-head:hover .nav-filter-icon { stroke: var(--red); }
+body.dark .nav-filter-head:hover .nav-filter-label { color: var(--red); }
+body.dark .nav-filter-clear-btn:hover { color: var(--red); background: rgba(168,86,80,0.06); }
+body.dark .nav-filter-section.acc-open .nav-filter-acc-head { background: rgba(168,86,80,0.06); }
+body.dark .nav-filter-group.open .nav-filter-head { background: rgba(168,86,80,0.06); }
+body.dark .nav-filter-body { background: rgba(255,255,255,0.015); }
+body.dark .kartlar-sort-label { color: #52525b; }
+body.dark .kartlar-toolbar .sort-pills { background: #1a1a1f; border-color: #2d2d33; }
+body.dark .sort-pills { background: #1a1a1f; border-color: #2d2d33; }
+body.dark .sort-pill { color: #a1a1aa; }
+body.dark .sort-pill:hover { color: #fafafa; }
+body.dark .sort-pill.active { background: #fafafa; color: #18181b; box-shadow: none; }
+body.dark .active-filter-row { background: #0F0F12; border-color: #2d2d33; }
+body.dark .active-filter-label { color: #52525b; }
+body.dark .active-filter-clear-all { color: #71717a; }
+body.dark .active-filter-clear-all:hover { color: #ff5a5a; }
+body.dark .active-chip { background: #27272A; color: #a1a1aa; border-color: #3f3f46; }
+body.dark .nav-filter-count-badge { background: #2d2d33; color: #71717a; }
+body.dark .nav-filter-clear-btn { border-color: #3f3f46; color: #71717a; }
+body.dark .nav-filter-clear-btn:hover { background: rgba(168,86,80,0.12); border-color: rgba(168,86,80,0.4); color: #ff5a5a; }
+body.dark .product-card[data-mode="best"]  { --accent: #4E8A66; --accent-bg: rgba(78,138,102,0.14); --accent-border: rgba(78,138,102,0.35); }
+body.dark .product-card[data-mode="worst"] { --accent: #A85650; --accent-bg: rgba(168,86,80,0.14);  --accent-border: rgba(168,86,80,0.35); }
+body.dark .card-metrics-grid { background: #18181b; border-color: #2d2d33; }
+body.dark .card-metric-cell + .card-metric-cell { border-left-color: #2d2d33; }
+body.dark .card-metric-cell.sort-hl { border-left-color: var(--accent-border); }
+body.dark .nav-cin-item:hover,
+body.dark .nav-anagrp-head:hover,
+body.dark .nav-altkat-item:hover { background: rgba(255,255,255,0.025); color: #fafafa; }
+body.dark .nav-altkat-item.active { background: rgba(255,255,255,0.04); color: #fafafa; }
+
+/* ── NAV COMPACT USER ── */
+body.dark .nav-compact-user { background: var(--card); border-color: var(--border); }
+
+/* ── KART YÜZEYLERİ ── */
+body.dark .card,
+body.dark .panel,
+body.dark .metric-card,
+body.dark .chart-card,
+body.dark .product-card,
+body.dark .ayar-card,
+body.dark .sis-section,
+body.dark .ayar-card,
+body.dark .vd-stat,
+body.dark .vo-sc,
+body.dark .sis-vo-stat,
+body.dark .info-tile,
+body.dark .user-dropdown {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── KART BAŞLIKLARI (gradient) ── */
+body.dark .card-header,
+body.dark .panel-header,
+body.dark .ayar-card-head,
+body.dark .sis-h {
+  background: linear-gradient(to right, var(--card-2), var(--card));
+  border-bottom-color: var(--border);
+}
+body.dark .ayar-card-icon { background: rgba(168,86,80,0.10); }
+body.dark .ayar-card-icon svg { stroke: var(--red); }
+
+/* ── TABLO ZEMİNLERİ ── */
+body.dark .table-header { background: var(--card-2); border-bottom-color: var(--border); }
+body.dark .table-row { border-bottom-color: var(--border-soft); }
+body.dark .table-row:hover { background: rgba(255,255,255,0.02); }
+body.dark .kat-table th { background: var(--card-2); border-bottom-color: var(--border); }
+body.dark .kat-table td { border-bottom-color: var(--border-soft); }
+body.dark .kat-table tr:hover td { background: rgba(255,255,255,0.02); }
+body.dark .ku-tablo th { border-bottom-color: var(--border); }
+body.dark .ku-tablo td { border-bottom-color: var(--border-soft); }
+body.dark .ku-tablo tr:hover td { background: rgba(255,255,255,0.02); }
+body.dark .kv-row { border-bottom-color: var(--border-soft); }
+
+/* ── FORM ALANLARI ── */
+body.dark .input-text,
+body.dark .esik-input,
+body.dark .ku-rol-select,
+body.dark .nav-filter-select,
+body.dark .top-select,
+body.dark .kullanici-input,
+body.dark .sis-sp-input,
+body.dark .ge-input,
+body.dark .sis-ms-num,
+body.dark .nav-slider-num {
+  background: var(--bg);
+  color: var(--text-dark);
+  border-color: var(--border-md);
+}
+body.dark .input-text:focus,
+body.dark .esik-input:focus,
+body.dark .kullanici-input:focus,
+body.dark .ku-rol-select:focus,
+body.dark .nav-filter-select:focus {
+  background: var(--card-2);
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(168,86,80,0.12);
+}
+body.dark .input-text:disabled { background: var(--card-2); }
+body.dark .input-pwd-toggle { color: var(--text-muted); }
+
+/* ── BUTONLAR ── */
+body.dark .btn { background: var(--card-2); color: var(--text-mid); border-color: var(--border-md); }
+body.dark .btn:hover { border-color: var(--text-muted); }
+body.dark .btn-primary {
+  background: var(--red);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: none;
+}
+body.dark .btn-primary:hover { background: #8A4540; }
+body.dark .btn-mini { background: var(--card-2); color: var(--text-mid); border-color: var(--border-md); }
+body.dark .btn-mini.danger { color: var(--red); border-color: rgba(168,86,80,0.32); }
+body.dark .btn-mini.danger:hover { background: rgba(168,86,80,0.06); }
+body.dark .btn-mini.warning { color: var(--blue); border-color: rgba(82,112,166,0.26); }
+body.dark .btn-mini.warning:hover { background: rgba(82,112,166,0.06); }
+/* ── ROZETLER & DURUM ── */
+body.dark .ku-durum.aktif,
+body.dark .st-good { background: rgba(78,138,102,0.10); color: var(--green); }
+body.dark .ku-durum.pasif,
+body.dark .st-bad,
+body.dark .metric-change.down { background: rgba(168,86,80,0.10); color: var(--red); }
+body.dark .ku-durum.beklemede { background: rgba(82,112,166,0.10); color: var(--blue); }
+body.dark .st-mid { background: rgba(217,180,112,0.10); color: var(--yellow); }
+body.dark .metric-change.up { background: rgba(78,138,102,0.10); color: var(--green); }
+body.dark .role-yonetici,
+body.dark .role-kullanici { background: rgba(168,86,80,0.14); color: var(--red); }
+body.dark .role-pill { background: rgba(168,86,80,0.14); color: var(--red); }
+
+/* ── METRİK KARTI ── */
+body.dark .metric-card:hover { border-color: var(--border-md); }
+body.dark .metric-card::after { background: var(--red); }
+
+/* ── SEKMELER ── */
+body.dark .tabs { border-bottom-color: var(--border); }
+body.dark .tab { color: var(--text-light); }
+body.dark .tab.active { color: var(--red); border-bottom-color: var(--red); }
+
+/* ── ŞAL/PROFİL MESAJLARI ── */
+body.dark .profil-msg.ok { background: rgba(78,138,102,0.10); color: var(--green); }
+body.dark .profil-msg.err { background: rgba(168,86,80,0.10); color: var(--red); }
+
+/* ── TOPBAR USER & DROPDOWN ── */
+body.dark .topbar-user { background: var(--card); border-color: var(--border-md); }
+body.dark .topbar-user:hover { border-color: rgba(168,86,80,0.32); }
+body.dark .user-dropdown { background: var(--card-2); border-color: var(--border-md); }
+body.dark .user-dropdown-header { background: var(--card); border-bottom-color: var(--border); }
+body.dark .user-dropdown-item:hover { background: rgba(255,255,255,0.025); color: var(--text-dark); }
+body.dark .user-dropdown-item.danger:hover { background: rgba(168,86,80,0.07); }
+body.dark .user-dropdown-divider { background: var(--border); }
+
+/* ── MODALLAR ── */
+body.dark .modal-overlay { background: rgba(0,0,0,0.45); }
+body.dark .modal,
+body.dark .stok-modal { background: var(--card-2); border-color: var(--border-md); box-shadow: var(--shadow-lg); }
+body.dark .modal-header { background: linear-gradient(to right, rgba(168,86,80,0.07), var(--card-2)); border-bottom-color: var(--border); }
+body.dark .modal-close { background: var(--bg); border-color: var(--border-md); color: var(--text-muted); }
+body.dark .modal-close:hover { background: rgba(168,86,80,0.07); border-color: rgba(168,86,80,0.32); color: var(--red); }
+body.dark .detail-row,
+body.dark .risk-row { border-bottom-color: var(--border-soft); }
+body.dark .risk-tag.indirim { background: rgba(168,86,80,0.10); color: var(--red); border-color: rgba(168,86,80,0.24); }
+body.dark .risk-tag.transfer { background: rgba(78,138,102,0.10); color: var(--green); border-color: rgba(78,138,102,0.22); }
+body.dark .risk-tag.siparis { background: rgba(82,112,166,0.10); color: var(--blue); border-color: rgba(82,112,166,0.22); }
+
+/* ── ÜRÜN KARTLARI (resim alanı beyaz kalır, footer koyulaşır) ── */
+body.dark .card-img-wrap { background: #FFFFFF; }
+body.dark .card-rank-badge { background: rgba(255,255,255,0.92); }
+body.dark .card-footer { background: var(--card); border-top-color: var(--border); }
+
+/* ── BSWS BAR ── */
+body.dark .bsws-tab { background: var(--card); color: var(--text-muted); border-color: var(--border-md); }
+body.dark .bsws-tab.bs-active { background: rgba(78,138,102,0.07); color: var(--green); border-color: var(--green); }
+body.dark .bsws-tab.ws-active { background: rgba(168,86,80,0.07); color: var(--red); border-color: var(--red); }
+
+/* ── SİS PARAMETRELERİ EKRANI ── */
+body.dark .ge-chip.bs { background: rgba(78,138,102,0.10); color: var(--green); }
+body.dark .ge-chip.ciro { background: rgba(168,86,80,0.10); color: var(--red); }
+body.dark .ge-chip.kar { background: rgba(82,112,166,0.10); color: var(--blue); }
+body.dark .vo-sc { background: var(--card-2); border-color: var(--border); }
+body.dark .vo-sc.active { background: rgba(168,86,80,0.05); border-color: var(--red); }
+body.dark .sis-vo-sep,
+body.dark .vo-stat-sep { background: var(--border-soft); }
+body.dark .vo-sezon-secili { background: var(--card-2); border-color: var(--border-md); }
+
+/* ── SLIDER, TOPLAM BANT ── */
+body.dark .slider-toplam { background: rgba(78,138,102,0.07); border-color: rgba(78,138,102,0.22); color: var(--green); }
+body.dark .slider-toplam.invalid { background: rgba(168,86,80,0.07); border-color: rgba(168,86,80,0.24); color: var(--red); }
+
+/* ── PERIOD TOGGLE ── */
+body.dark .period-toggle-sm { background: var(--card); border-color: var(--border-md); }
+body.dark .period-btn-sm.active { background: var(--red); color: #fff; }
+
+/* ── TIPS / TOOLTIP ── */
+body.dark .ct-tip { background: var(--card-2); border-color: var(--border-md); color: var(--text-dark); }
+body.dark .ct-tip-title { color: var(--text-dark); border-bottom-color: var(--border); }
+body.dark .ct-tip-row { color: var(--text-mid); }
+
+/* ── ANIMATED SCROLLBAR & FOCUS RING ── */
+body.dark *::-webkit-scrollbar-thumb { background: var(--border-md); }
+body.dark :focus-visible { outline-color: var(--red); }
+
+/* ── LOGO TEMA SWITCHER ── */
+.nav-logo .logo-dark { display: none; }
+body.dark .nav-logo .logo-light { display: none; }
+body.dark .nav-logo .logo-dark  { display: block; width: 100%; height: auto; max-height: 52px; object-fit: contain; }
+
+/* ── WELCOME BANNER ── */
+body.dark .welcome-banner {
+  background: var(--red);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+body.dark .welcome-banner::before {
+  background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+}
+body.dark .welcome-text h2 { color: #EFE7DF; }
+body.dark .welcome-text p { color: rgba(239,231,223,0.65); }
+body.dark .welcome-date strong { color: #EFE7DF; }
+body.dark .welcome-date span { color: rgba(239,231,223,0.55); }
+body.dark .welcome-dismiss {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(239,231,223,0.78);
+}
+body.dark .welcome-dismiss:hover { background: rgba(255,255,255,0.14); color: #EFE7DF; }
+
+/* ── AVATAR DAİRELERİ ── */
+body.dark .user-avatar,
+body.dark .nav-compact-avatar {
+  background: var(--red);
+  box-shadow: none;
+}
+
+/* ── SİDEBAR AKTİF MENÜ ── */
+body.dark .nav-item.active {
+  background: var(--red);
+  box-shadow: none;
+}
+
+/* ── PANEL BAŞLIKLARI (inline style override) ── */
+body.dark .bs-dot   { background: var(--green) !important; }
+body.dark .bs-title { color:      var(--green) !important; }
+body.dark .ws-dot   { background: var(--red)   !important; }
+body.dark .ws-title { color:      var(--red)   !important; }
+body.dark .nav-item.active:hover { background: #8A4540; }
+
+/* ── AYARLAR: SİRALAMA TOPLAM (inline style override) ── */
+body.dark #sp-total-num    { color: var(--green) !important; }
+body.dark #sp-total-status { color: var(--green) !important; }
+body.dark #slider-total    { color: var(--green) !important; }
+
+/* ── AYARLAR: GRAFİK EŞİKLERİ SATIR RENKLERİ (inline style override) ── */
+body.dark .sis-ge-row-bs   { border-left-color: var(--green)                !important; }
+body.dark .sis-ge-row-ciro { border-left-color: var(--yellow)               !important; }
+body.dark .sis-ge-row-kar  { border-left-color: var(--blue)                 !important; }
+body.dark .sis-ge-row-mrk  { border-left-color: #9F67F5                     !important; }
+
+body.dark .sis-ge-row-bs   .sis-ge-chip { color: var(--green) !important; background: rgba(78,138,102,0.12)  !important; }
+body.dark .sis-ge-row-ciro .sis-ge-chip { color: var(--yellow) !important; background: rgba(217,180,112,0.12) !important; }
+body.dark .sis-ge-row-kar  .sis-ge-chip { color: var(--blue)  !important; background: rgba(82,112,166,0.12)  !important; }
+body.dark .sis-ge-row-mrk  .sis-ge-chip { color: #9F67F5      !important; background: rgba(124,58,237,0.15)  !important; }
+
+/* ── KULLANICI SİLME BUTONU ── */
+body.dark .silme-confirm-btn { background: var(--red) !important; }
+body.dark .silme-confirm-btn:hover { background: #8A4540 !important; }
+
+/* ============================================================================
+   SİSTEM PARAMETRELERİ — Dark Mode Revizyon
+   Açık tema (#fff, #FAFAFA, #F9FAFB, #E63030 vurgu) yüzeylerinin koyu temaya
+   geçişinde leak yaptığı tüm noktalar burada toplandı. Inline style'larla
+   gelen #16A34A / #C0392B / #2563EB / rgba(...) değerleri için !important.
+   ============================================================================ */
+
+/* Sayfa kabı + başlık */
+body.dark .sis-wrap    { background: var(--bg); }
+body.dark .sis-eyebrow { color: var(--red); }
+body.dark .sis-title   { color: var(--text-dark); }
+body.dark .sis-sub     { color: var(--text-muted); }
+
+/* Section kabı */
+body.dark .sis-section {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Numara rozeti — bright red glow yerine mat tonlu kırmızı */
+body.dark .sis-num {
+  background: var(--red) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 8px rgba(168,86,80,0.28) !important;
+}
+
+/* Section başlığı gradient'i — sıcak kırmızı yıkanma yerine kart-2 → kart */
+body.dark .sis-section-head {
+  background: linear-gradient(to right, rgba(168,86,80,0.07), var(--card) 60%) !important;
+  border-bottom-color: var(--border);
+}
+body.dark .sis-section-title { color: var(--text-dark); }
+body.dark .sis-section-sub   { color: var(--text-muted); }
+
+/* Section ayağı (footer) — açık temadaki #FAFAFA leak'i */
+body.dark .sis-section-foot {
+  background: var(--card-2) !important;
+  border-top: 1px dashed var(--border) !important;
+}
+
+/* Ghost & Primary butonlar — dark scheme */
+body.dark .sis-btn-ghost {
+  background: var(--card-2);
+  color: var(--text-mid);
+  border-color: var(--border-md);
+}
+body.dark .sis-btn-ghost:hover {
+  background: var(--bg);
+  border-color: var(--text-muted);
+  color: var(--text-dark);
+}
+body.dark .sis-btn-primary {
+  background: var(--red) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(168,86,80,0.22) !important;
+}
+body.dark .sis-btn-primary:hover { background: #8A4540 !important; opacity: 1; }
+
+/* ── 1. VERİ ORTAMI — KPI şeridi ── */
+body.dark .sis-vo-stats      { background: transparent; border: none; }
+body.dark .sis-vo-stat       { color: var(--text-dark); }
+body.dark .sis-vo-val        { color: var(--text-dark); }
+body.dark .sis-vo-red        { color: var(--red) !important; }
+body.dark .sis-vo-lbl        { color: var(--text-muted); }
+body.dark .sis-vo-sep        { background: var(--border-soft); }
+body.dark .sis-vo-sezon-lbl  { color: var(--text-dark); }
+body.dark .sis-vo-sezon-date { color: var(--text-muted); }
+
+/* ── 2. SIRALAMA PARAMETRELERİ — kartlar ve track ── */
+body.dark .sis-sp-card {
+  background: var(--card-2) !important;
+  border-color: var(--border);
+}
+body.dark .sis-sp-name  { color: var(--text-mid); }
+body.dark .sis-sp-input { color: var(--text-dark); background: transparent; }
+body.dark .sis-sp-pct   { color: var(--text-muted); }
+
+/* SP step spin butonları — beyaz leak fix */
+body.dark .sis-sp-spin {
+  background: var(--bg);
+  border-color: var(--border-md);
+  color: var(--text-mid);
+}
+body.dark .sis-sp-spin:hover {
+  background: var(--card);
+  color: var(--text-dark);
+  border-color: var(--text-muted);
+}
+
+/* SP track */
+body.dark .sis-sp-track-bg   { background: var(--border) !important; }
+body.dark .sis-sp-track-fill { background: var(--red) !important; }
+
+/* SP toplam etiket */
+body.dark .sis-sp-total-lbl    { color: var(--text-muted); }
+body.dark .sis-sp-total-num    { color: var(--green) !important; }
+body.dark .sis-sp-total-status { color: var(--green) !important; }
+
+/* ── 3. GRAFİK EŞİKLERİ — satırlar ── */
+body.dark .sis-ge-row {
+  background: var(--card-2) !important;
+  border: 1px solid var(--border) !important;
+  border-left-width: 3px !important;
+}
+body.dark .sis-ge-title  { color: var(--text-dark); }
+body.dark .sis-ge-lbl    { color: var(--text-muted); }
+body.dark .sis-ge-suffix { color: var(--text-mid); }
+
+/* GE mini stepper (number + spin column) — beyaz/krem leak fix */
+body.dark .sis-ms {
+  background: var(--bg) !important;
+  border: 1.5px solid var(--border-md) !important;
+  overflow: hidden;
+}
+body.dark .sis-ms-num {
+  background: transparent;
+  color: var(--text-dark);
+}
+body.dark .sis-ms-spin {
+  background: var(--card);
+  border: none;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-mid);
+}
+body.dark .sis-ms-spin:last-child { border-bottom: none !important; }
+body.dark .sis-ms-spin:hover { background: var(--card-2); }
+
+/* Renk akışı: BS=yeşil, CİRO=kırmızı (dashboard ile aynı ton), KAR=mavi */
+body.dark .sis-ge-row-bs   .sis-ms { border-color: rgba(78,138,102,0.35) !important; }
+body.dark .sis-ge-row-ciro .sis-ms { border-color: rgba(217,180,112,0.35) !important; }
+body.dark .sis-ge-row-kar  .sis-ms { border-color: rgba(82,112,166,0.35) !important; }
+body.dark .sis-ge-row-mrk  .sis-ms { border-color: rgba(124,58,237,0.35) !important; }
+
+body.dark .sis-ge-row-bs   .sis-ms-spin { color: var(--green) !important; }
+body.dark .sis-ge-row-ciro .sis-ms-spin { color: var(--yellow) !important; }
+body.dark .sis-ge-row-kar  .sis-ms-spin { color: var(--blue)  !important; }
+body.dark .sis-ge-row-mrk  .sis-ms-spin { color: #9F67F5      !important; }
+
+body.dark .sis-ge-row-bs   .sis-ms-num { color: var(--green) !important; }
+body.dark .sis-ge-row-ciro .sis-ms-num { color: var(--yellow) !important; }
+body.dark .sis-ge-row-kar  .sis-ms-num { color: var(--blue)  !important; }
+body.dark .sis-ge-row-mrk  .sis-ms-num { color: #9F67F5      !important; }
+
+/* Section başlık gradient'inde rgba(230,48,48,…) leak'i kapat */
+body.dark .sis-section .sis-section-head {
+  background: linear-gradient(to right, rgba(168,86,80,0.07), var(--card) 60%);
+}
+
+/* ── SEZON KARTLARI — dark mode ── */
+body.dark .vo-sc-red  .vo-sc-chip { background: rgba(168,86,80,0.14);   color: var(--red);    }
+body.dark .vo-sc-blue .vo-sc-chip { background: rgba(82,112,166,0.14);  color: var(--blue);   }
+body.dark .vo-sc-gray .vo-sc-chip { background: rgba(217,180,112,0.14); color: var(--yellow); }
+
+body.dark .vo-sc-red.active  { border-color: var(--red);    background: rgba(168,86,80,0.04);    }
+body.dark .vo-sc-blue.active { border-color: var(--blue);   background: rgba(82,112,166,0.04);   }
+body.dark .vo-sc-gray.active { border-color: var(--yellow); background: rgba(217,180,112,0.04);  }
+
+body.dark .vo-sc-red.active  .vo-sc-label { color: var(--red);       }
+body.dark .vo-sc-blue.active .vo-sc-label { color: var(--blue);      }
+body.dark .vo-sc-gray.active .vo-sc-label { color: var(--text-dark); }
+body.dark .vo-sc-purple .vo-sc-chip { background: rgba(217,180,112,0.14); color: var(--yellow); }
+body.dark .vo-sc-purple.active { border-color: var(--yellow); background: rgba(217,180,112,0.04); }
+body.dark .vo-sc-purple.active .vo-sc-label { color: var(--text-dark); }
+
+/* ── TOP 10 KARTLAR — sidebar sekme noktaları ── */
+body.dark .nav-sub-dot-bs { background: var(--green) !important; }
+
+/* ── MARKA CHART — DARK ── */
+body.dark .marka-tt { background: #2A2A30; border-color: #383840; box-shadow: 0 4px 20px rgba(0,0,0,0.30); }
+body.dark .marka-tt-name  { color: #DEDEDA; }
+body.dark .marka-tt-k     { color: #85857F; }
+body.dark .marka-tt-v     { color: #DEDEDA; }
+body.dark .marka-tt-foot  { border-color: #38383F; }
+body.dark .marka-tt-zone  { color: #85857F; }
+body.dark .marka-leg-name { color: #B5B5B1; }
+body.dark .marka-leg-item:hover { background: rgba(255,255,255,0.06); }
+body.dark .nav-sub-dot-ws { background: var(--red)   !important; }
+
+/* ── BİLDİRİM (DARK MODE) ── */
+body.dark .bildirim-btn { background: var(--card); border-color: var(--border-md); color: var(--text-muted); }
+body.dark .bildirim-btn:hover { border-color: rgba(168,86,80,0.32); color: var(--red); background: rgba(168,86,80,0.07); }
+body.dark .bildirim-wrap.open .bildirim-btn { border-color: rgba(168,86,80,0.32); color: var(--red); background: rgba(168,86,80,0.10); }
+body.dark .bildirim-badge { background: var(--red); border-color: var(--card); }
+body.dark .bildirim-dropdown { background: var(--card-2); border-color: var(--border-md); }
+body.dark .bildirim-dropdown-header { background: var(--card); border-bottom-color: var(--border); }
+body.dark .bildirim-dropdown-baslik { color: var(--text-muted); }
+body.dark .bildirim-satir { border-bottom-color: var(--border); }
+body.dark .bildirim-baslik { color: var(--text-dark); }
+body.dark .bildirim-mesaj  { color: var(--text-muted); }
+body.dark .bildirim-bos    { color: var(--text-light); }
+

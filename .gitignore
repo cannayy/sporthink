@@ -1,0 +1,29 @@
+# Ortam değişkenleri ve gizli bilgiler
+.env
+
+# Python önbelleği
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Sanal ortam
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# macOS
+.DS_Store
+
+# Geçici ve yerel dosyalar
+*.db
+*.sqlite3
+*.log
+
+# Excel veri dosyaları (büyük boyutlu)
+*.xlsx
+*.xls
