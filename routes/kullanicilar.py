@@ -138,26 +138,11 @@ def kullanici_davet():
         <p style="color:#b0bec8;font-size:12px;margin-top:20px;">Bu link <strong>7 gün</strong> geçerlidir ve yalnızca bir kez kullanılabilir.</p>
         <p style="color:#b0bec8;font-size:12px;margin-top:6px;">Bu daveti siz talep etmediyseniz bu e-postayı görmezden gelebilirsiniz.</p>
     """
-    mail_gitti, mail_hata = mail_gonger([email], "Sporthink — Hesabınıza Davet Edildiniz", mail_template(icerik))
-    if not mail_gitti:
-        try:
-            conn = get_db()
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM sifre_sifirlama WHERE token = %s", (token,))
-            cursor.execute("DELETE FROM kullanicilar WHERE email = %s AND aktif = FALSE", (email,))
-            conn.commit()
-            conn.close()
-        except Exception:
-            pass
-        hata_mesaj = 'Davet e-postası gönderilemedi.'
-        if mail_hata and 'SMTPAuthenticationError' in mail_hata:
-            hata_mesaj = 'Gmail App Şifresi geçersiz veya süresi dolmuş. .env dosyasındaki MAIL_PASSWORD değerini güncelleyin.'
-        elif mail_hata and ('Connection' in mail_hata or 'timeout' in mail_hata.lower()):
-            hata_mesaj = 'SMTP sunucusuna bağlanılamadı. İnternet bağlantısını ve güvenlik duvarı ayarlarını kontrol edin.'
-        elif mail_hata:
-            hata_mesaj = f'Mail gönderilemedi: {mail_hata}'
-        return jsonify({'message': hata_mesaj}), 500
-    return jsonify({'ok': True})
+    mail_gitti, _ = mail_gonger([email], "Sporthink — Hesabınıza Davet Edildiniz", mail_template(icerik))
+    if mail_gitti:
+        return jsonify({'ok': True})
+    # Mail gönderilemedi — kullanıcı ve token DB'de kalır, linki döndür
+    return jsonify({'ok': True, 'mail_basarisiz': True, 'davet_link': davet_link})
 
 
 @kullanicilar_bp.route('/api/kullanici-rol/<int:kullanici_id>', methods=['POST'])

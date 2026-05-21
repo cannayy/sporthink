@@ -56,10 +56,17 @@ async function kullaniciDavetEt() {
   const data = await res.json();
   msg.style.display='block';
   if (res.ok) {
-    msg.className='profil-msg ok'; msg.textContent='✓ Davet gönderildi! '+email+' adresine giriş bilgileri iletildi.';
     document.getElementById('yeni-ad').value=''; document.getElementById('yeni-email').value=''; document.getElementById('yeni-rol').value='';
-    kullanicilariYukle(); autoHideMsg(msg);
-  } else { msg.className='profil-msg err'; msg.textContent=data.message||'Bir hata oluştu.'; }
+    kullanicilariYukle();
+    if (data.mail_basarisiz && data.davet_link) {
+      msg.className='profil-msg ok';
+      msg.innerHTML='✓ Kullanıcı oluşturuldu. Mail gönderilemedi — daveti manuel paylaş:<br><a href="'+data.davet_link+'" target="_blank" style="word-break:break-all;color:#e02020;">'+data.davet_link+'</a>';
+      msg.style.display='block';
+    } else {
+      msg.className='profil-msg ok'; msg.textContent='✓ Davet gönderildi! '+email+' adresine giriş bilgileri iletildi.';
+      msg.style.display='block'; autoHideMsg(msg);
+    }
+  } else { msg.className='profil-msg err'; msg.textContent=data.message||'Bir hata oluştu.'; msg.style.display='block'; }
 }
 
 async function kullaniciPasifYap(id) {
