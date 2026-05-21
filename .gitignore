@@ -27,3 +27,7 @@ env/
 # Excel veri dosyaları (büyük boyutlu)
 *.xlsx
 *.xls
+
+# Büyük görseller
+static/images/adidas.png
+static/images/converse.png
