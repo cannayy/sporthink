@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+import threading
 from flask_mail import Mail, Message
 
 mail = Mail()
+_app = None
 
 
 def init_mail(app):
+    global _app
+    _app = app
     mail.init_app(app)
 
 
@@ -19,6 +23,15 @@ def mail_gonger(recipients, subject, html):
         hata = f"{type(e).__name__}: {e}"
         print(f"❌ Mail gönderilemedi: {hata}")
         return False, hata
+
+
+def mail_gonger_bg(recipients, subject, html):
+    """Mail'i arka planda gönder, isteği bloklamaz."""
+    def _send():
+        with _app.app_context():
+            mail_gonger(recipients, subject, html)
+    t = threading.Thread(target=_send, daemon=True)
+    t.start()
 
 
 def mail_template(icerik):

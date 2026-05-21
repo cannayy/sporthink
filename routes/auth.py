@@ -5,7 +5,7 @@ import secrets
 import psycopg2.extras
 from flask import Blueprint, jsonify, request, render_template, session, redirect, url_for
 from utils.db import get_db
-from utils.mail import mail_gonger, mail_template
+from utils.mail import mail_gonger_bg, mail_template
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -96,7 +96,7 @@ def sifremi_unuttum():
         </a>
         <p style="color:#b0bec8;font-size:12px;margin-top:24px;">Bu link <strong>1 saat</strong> geçerlidir.</p>
     """
-    mail_gonger([email], "Sporthink — Şifre Sıfırlama", mail_template(icerik))
+    mail_gonger_bg([email], "Sporthink — Şifre Sıfırlama", mail_template(icerik))
     return jsonify({'ok': True})
 
 

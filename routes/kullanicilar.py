@@ -5,7 +5,7 @@ import secrets
 import psycopg2.extras
 from flask import Blueprint, jsonify, request, session
 from utils.db import get_db
-from utils.mail import mail_gonger, mail_template
+from utils.mail import mail_gonger_bg, mail_template
 from utils.query_helpers import login_required
 
 kullanicilar_bp = Blueprint('kullanicilar', __name__)
@@ -138,11 +138,8 @@ def kullanici_davet():
         <p style="color:#b0bec8;font-size:12px;margin-top:20px;">Bu link <strong>7 gün</strong> geçerlidir ve yalnızca bir kez kullanılabilir.</p>
         <p style="color:#b0bec8;font-size:12px;margin-top:6px;">Bu daveti siz talep etmediyseniz bu e-postayı görmezden gelebilirsiniz.</p>
     """
-    mail_gitti, _ = mail_gonger([email], "Sporthink — Hesabınıza Davet Edildiniz", mail_template(icerik))
-    if mail_gitti:
-        return jsonify({'ok': True})
-    # Mail gönderilemedi — kullanıcı ve token DB'de kalır, linki döndür
-    return jsonify({'ok': True, 'mail_basarisiz': True, 'davet_link': davet_link})
+    mail_gonger_bg([email], "Sporthink — Hesabınıza Davet Edildiniz", mail_template(icerik))
+    return jsonify({'ok': True})
 
 
 @kullanicilar_bp.route('/api/kullanici-rol/<int:kullanici_id>', methods=['POST'])
