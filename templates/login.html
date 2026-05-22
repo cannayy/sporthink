@@ -18,12 +18,11 @@ body {
   justify-content: center;
   background: #f4f5f7;
   background-image:
-    radial-gradient(circle at 20% 20%, rgba(224,32,32,0.04) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(224,32,32,0.03) 0%, transparent 50%);
+    radial-gradient(circle at 20% 20%, rgba(214,69,69,0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(214,69,69,0.03) 0%, transparent 50%);
   position: relative;
 }
 
-/* Footer */
 .page-footer {
   position: fixed;
   bottom: 20px;
@@ -32,14 +31,14 @@ body {
   font-size: 11px;
   color: #b0bec8;
 }
-.page-footer span { color: #e02020; }
+.page-footer span { color: #D64545; }
 
-/* Ana kart */
 .login-card {
   background: #ffffff;
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 20px;
-  padding: 44px 40px 36px;
+  padding: 0;
+  overflow: hidden;
   width: 100%;
   max-width: 420px;
   box-shadow:
@@ -48,38 +47,38 @@ body {
     0 32px 64px rgba(0,0,0,0.04);
 }
 
-/* Logo ortada küçük */
-.card-logo {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-.card-logo img { height: 40px; object-fit: contain; }
-
-.divider-line {
-  height: 1px;
-  background: rgba(0,0,0,0.07);
-  margin-bottom: 24px;
+.brand-strip {
+  height: 4px;
+  background: linear-gradient(90deg, #D64545 0%, #8E2820 100%);
 }
 
-.card-title {
-  text-align: center;
-  font-size: 20px;
+.card-inner { padding: 40px 44px 36px; }
+
+.lockup { text-align: center; margin-bottom: 30px; }
+.lockup img { height: 56px; display: block; margin: 0 auto 18px; object-fit: contain; }
+.lockup .card-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #D64545;
+  margin-bottom: 10px;
+}
+.lockup h1 {
+  font-size: 26px;
   font-weight: 700;
   color: #1a1a2e;
-  margin-bottom: 6px;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
 }
-
-.card-sub {
-  text-align: center;
-  font-size: 13px;
-  color: #8a9ab5;
-  margin-bottom: 28px;
+.lockup p {
+  font-size: 13.5px;
+  color: #6b7280;
+  margin: 0 auto;
+  max-width: 320px;
   line-height: 1.5;
 }
 
-/* Field label */
 .field-label {
   font-size: 12px;
   font-weight: 600;
@@ -89,7 +88,6 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* Form alanları */
 .field {
   position: relative;
   margin-bottom: 14px;
@@ -109,12 +107,11 @@ body {
 }
 .field input::placeholder { color: #c0ccd8; }
 .field input:focus {
-  border-color: #e02020;
+  border-color: #D64545;
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(224,32,32,0.08);
+  box-shadow: 0 0 0 3px rgba(214,69,69,0.10);
 }
 
-/* Şifre toggle */
 .field .toggle-pw {
   position: absolute;
   right: 13px; top: 50%; transform: translateY(-50%);
@@ -126,7 +123,6 @@ body {
 .field .toggle-pw:hover { color: #888; }
 .field.has-toggle input { padding-right: 42px; }
 
-/* Beni hatırla + şifremi unuttum */
 .form-options {
   display: flex;
   align-items: center;
@@ -141,47 +137,43 @@ body {
 .remember-wrap input[type=checkbox] {
   width: 15px; height: 15px;
   border-radius: 4px;
-  accent-color: #e02020;
+  accent-color: #D64545;
   cursor: pointer;
 }
 .remember-label {
   font-size: 12px;
-  color: #6b7a90;
+  color: #6b7280;
   font-weight: 500;
 }
 .forgot-link {
   font-size: 12px;
-  color: #8a9ab5;
+  color: #6b7280;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.15s;
 }
-.forgot-link:hover { color: #e02020; }
+.forgot-link:hover { color: #D64545; }
 
-/* Giriş butonu */
 .btn-login {
   width: 100%;
   padding: 13px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   font-family: inherit;
   letter-spacing: 0.1px;
   color: #fff;
-  background: #e02020;
+  background: linear-gradient(135deg, #D64545 0%, #8E2820 100%);
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  transition: filter 0.2s, transform 0.1s, box-shadow 0.2s;
   display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 6px 20px rgba(214,69,69,0.22);
 }
-.btn-login:hover {
-  background: #c01818;
-  box-shadow: 0 4px 16px rgba(224,32,32,0.25);
-}
+.btn-login:hover { filter: brightness(1.05); box-shadow: 0 8px 24px rgba(214,69,69,0.30); }
 .btn-login:active { transform: scale(0.99); }
 .btn-login:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
-/* Loading spinner */
 .btn-spinner {
   display: none;
   width: 15px; height: 15px;
@@ -192,13 +184,10 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-
-
-/* Hata mesajı */
 .error-msg {
-  background: rgba(224,32,32,0.06);
-  border: 1px solid rgba(224,32,32,0.18);
-  color: #c01818;
+  background: rgba(214,69,69,0.06);
+  border: 1px solid rgba(214,69,69,0.18);
+  color: #8E2820;
   font-size: 12.5px;
   font-weight: 500;
   padding: 10px 14px;
@@ -213,62 +202,59 @@ body {
 </head>
 <body>
 
-<!-- Giriş kartı -->
 <div class="login-card">
+  <div class="brand-strip"></div>
+  <div class="card-inner">
 
-  <!-- Kart içi logo -->
-  <div class="card-logo">
-    <img src="{{ url_for('static', filename='images/sporthink-logo.png') }}" alt="Sporthink">
+    <div class="lockup">
+      <img src="{{ url_for('static', filename='images/sporthink-logo.png') }}" alt="Sporthink">
+      <div class="card-eyebrow">Satış Analiz Paneli</div>
+      <h1>Tekrar hoş geldiniz</h1>
+      <p>Devam etmek için hesabınıza giriş yapın</p>
+    </div>
+
+    <div class="error-msg" id="error-msg">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="error-text">E-posta veya şifre hatalı.</span>
+    </div>
+
+    <form id="login-form" onsubmit="handleLogin(event)">
+
+      <div class="field">
+        <label class="field-label" for="email">E-posta</label>
+        <input type="email" id="email" placeholder="ornek@sporthink.com" autocomplete="email" required>
+      </div>
+
+      <div class="field has-toggle">
+        <label class="field-label" for="password">Şifre</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+        <span class="toggle-pw" onclick="togglePw()">
+          <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        </span>
+      </div>
+
+      <div class="form-options">
+        <label class="remember-wrap">
+          <input type="checkbox" id="remember">
+          <span class="remember-label">Beni hatırla</span>
+        </label>
+        <a href="/sifremi-unuttum" class="forgot-link">Şifremi unuttum</a>
+      </div>
+
+      <button type="submit" class="btn-login" id="login-btn">
+        <div class="btn-spinner" id="btn-spinner"></div>
+        <span id="btn-text">Giriş Yap</span>
+      </button>
+
+    </form>
+
   </div>
-  <div class="divider-line"></div>
-
-  <div class="card-title">Hesabınıza giriş yapın</div>
-  <div class="card-sub">Sporthink Satış Analiz Paneline hoş geldiniz</div>
-
-  <div class="error-msg" id="error-msg">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <span id="error-text">E-posta veya şifre hatalı.</span>
-  </div>
-
-  <form id="login-form" onsubmit="handleLogin(event)">
-
-    <div class="field">
-      <label class="field-label" for="email">E-posta</label>
-      <input type="email" id="email" placeholder="ornek@sporthink.com" autocomplete="email" required>
-    </div>
-
-    <div class="field has-toggle">
-      <label class="field-label" for="password">Şifre</label>
-      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
-      <span class="toggle-pw" onclick="togglePw()">
-        <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
-          <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
-          <line x1="1" y1="1" x2="23" y2="23"/>
-        </svg>
-      </span>
-    </div>
-
-    <div class="form-options">
-      <label class="remember-wrap">
-        <input type="checkbox" id="remember">
-        <span class="remember-label">Beni hatırla</span>
-      </label>
-      <a href="/sifremi-unuttum" class="forgot-link">Şifremi unuttum</a>
-    </div>
-
-    <button type="submit" class="btn-login" id="login-btn">
-      <div class="btn-spinner" id="btn-spinner"></div>
-      <span id="btn-text">Giriş Yap</span>
-    </button>
-
-  </form>
-
-
-
 </div>
 
-<!-- Footer -->
 <div class="page-footer">
   © 2026 <span>Sporthink</span> — Tüm hakları saklıdır.
 </div>
