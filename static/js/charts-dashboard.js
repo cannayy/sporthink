@@ -225,13 +225,6 @@ async function updateMarkaChart() {
   } catch(e) { console.error('Marka scatter hatası:', e); }
 }
 
-function _rrect(cx, x, y, w, h, r) {
-  cx.beginPath();
-  cx.moveTo(x + r, y); cx.lineTo(x + w - r, y); cx.arcTo(x + w, y, x + w, y + r, r);
-  cx.lineTo(x + w, y + h - r); cx.arcTo(x + w, y + h, x + w - r, y + h, r);
-  cx.lineTo(x + r, y + h); cx.arcTo(x, y + h, x, y + h - r, r);
-  cx.lineTo(x, y + r); cx.arcTo(x, y, x + r, y, r); cx.closePath();
-}
 
 function _mrkaFooter(points, stCut, gmCut, isDark) {
   const wrap = document.getElementById('marka-bar-chart')?.closest('.chart-card');

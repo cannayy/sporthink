@@ -1,11 +1,5 @@
 /* ── FİLTRELER & SIDEBAR ── */
 
-function setPeriod(p, el) {
-  currentPeriod = p;
-  document.querySelectorAll('.period-btn-sm').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  fetch('/api/filters').then(r=>r.json()).then(data => { buildDonemSelect(data); filtrelerYukle(); updateFilterSummaries(); renderActiveFilterChips(); loadData(); });
-}
 
 function setMarka(m) {
   const idx = currentMarkaList.indexOf(m);
