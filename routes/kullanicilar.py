@@ -126,7 +126,7 @@ def kullanici_davet():
         return jsonify({'message': 'Token oluşturma hatası.'}), 500
 
     rol_label = 'Yönetici' if rol == 'yonetici' else 'Kullanıcı'
-    base_url = (os.getenv('BASE_URL') or request.url_root.rstrip('/')).rstrip('/')
+    base_url = os.getenv('BASE_URL', 'http://127.0.0.1:5000')
     davet_link = f"{base_url}/hesap-olustur/{token}"
     icerik = f"""
         <p style="color:#6b7a90;font-size:14px;line-height:1.6;margin-bottom:20px;">
@@ -140,10 +140,8 @@ def kullanici_davet():
         <p style="color:#b0bec8;font-size:12px;margin-top:20px;">Bu link <strong>7 gün</strong> geçerlidir ve yalnızca bir kez kullanılabilir.</p>
         <p style="color:#b0bec8;font-size:12px;margin-top:6px;">Bu daveti siz talep etmediyseniz bu e-postayı görmezden gelebilirsiniz.</p>
     """
-    mail_ok, _ = mail_gonger([email], "Sporthink — Hesabınıza Davet Edildiniz", mail_template(icerik))
-    if mail_ok:
-        return jsonify({'ok': True})
-    return jsonify({'ok': True, 'mail_basarisiz': True, 'davet_link': davet_link})
+    mail_gonger_bg([email], "Sporthink — Hesabınıza Davet Edildiniz", mail_template(icerik))
+    return jsonify({'ok': True})
 
 
 @kullanicilar_bp.route('/api/kullanici-rol/<int:kullanici_id>', methods=['POST'])
