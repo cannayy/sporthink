@@ -125,7 +125,10 @@ function setNav(page, el) {
   const markaGrupNav = document.getElementById('fg-marka');
   if (markaGrupNav) markaGrupNav.style.display = page === 'kartlar' ? '' : 'none';
   const filterSection = document.getElementById('nav-filter-section');
-  if (filterSection) filterSection.style.display = '';
+  if (filterSection) filterSection.style.display = page === 'profil' ? 'none' : '';
+  const activeFilterRow = document.getElementById('active-filter-row');
+  if (activeFilterRow && page === 'profil') activeFilterRow.style.display = 'none';
+  else if (activeFilterRow && page !== 'profil') renderActiveFilterChips();
   // Ana grup ok işaretleri sadece kartlar sayfasında
   document.querySelectorAll('.nav-anagrp-chevron').forEach(c => {
     c.style.display = page === 'kartlar' ? '' : 'none';
