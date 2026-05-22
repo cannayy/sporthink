@@ -59,7 +59,7 @@ function filtreSifirla() {
   if (donemSel && donemSel.options.length > 0) donemSel.selectedIndex = 0;
 
   const sezonSel = document.getElementById('sezon-select');
-  if (sezonSel) sezonSel.value = '';
+  if (sezonSel) sezonSel.value = window._adminSezon || '';
 
   ['Aksesuar', 'Ayakkabı', 'Giyim'].forEach(grp => {
     const sub = document.getElementById('ag-sub-' + grp);

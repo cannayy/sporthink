@@ -151,7 +151,7 @@ function renderActiveFilterChips() {
   currentCinsiyetler.forEach(v => chips.push({ label: v, type: 'cinsiyet', val: v }));
   currentMarkaList.forEach(v   => chips.push({ label: toBasHarfBuyuk(v), type: 'marka', val: v }));
   const sezon = document.getElementById('sezon-select')?.value;
-  if (sezon) chips.push({ label: sezon, type: 'sezon', val: sezon });
+  if (sezon && sezon !== (window._adminSezon || '')) chips.push({ label: sezon, type: 'sezon', val: sezon });
   bar.innerHTML = chips.map(c =>
     '<span class="active-chip">' + c.label
     + '<span class="x" onclick="removeFilterChip(\'' + c.type + '\',\'' + c.val.replace(/'/g, "\\'") + '\')">×</span></span>'
@@ -182,11 +182,12 @@ function updateFilterSummaries() {
   setBadge('cinsiyet-count', currentCinsiyetler);
   setBadge('marka-count',    currentMarkaList);
   const sezon = document.getElementById('sezon-select')?.value;
-  setBadge('sezon-count',    sezon ? [sezon] : []);
+  const sezonUserChanged = sezon && sezon !== (window._adminSezon || '');
+  setBadge('sezon-count', sezonUserChanged ? [sezon] : []);
 
   // Clear button
   const totalActive = currentCinsiyetler.length + currentMarkaList.length + currentAnaGrupList.length
-                    + currentAltKatList.length + (sezon ? 1 : 0);
+                    + currentAltKatList.length + (sezonUserChanged ? 1 : 0);
   const clearRow = document.querySelector('.nav-filter-clear-row');
   if (clearRow) clearRow.style.display = totalActive > 0 ? 'flex' : 'none';
 }

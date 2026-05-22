@@ -39,6 +39,7 @@ async function init() {
     if (ayarlar.marka_st_cut)    window.MARKA_ST_CUT        = parseFloat(ayarlar.marka_st_cut);
     if (ayarlar.marka_gm_cut)    window.MARKA_GM_CUT        = parseFloat(ayarlar.marka_gm_cut);
     if (ayarlar.aktif_sezon !== undefined) _seciliSezon = ayarlar.aktif_sezon;
+    window._adminSezon = ayarlar.aktif_sezon || '';
     // Ayarlar slider/input değerlerini senkronize et (DOM hazır olduğunda)
     const gmroiEl = document.getElementById('ayar-gmroi');
     if (gmroiEl) { gmroiEl.value = Math.round(globalWeights.gmroi * 100); }
