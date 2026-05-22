@@ -5,7 +5,7 @@ async function kullanicilariYukle() {
   ['yeni-ad','yeni-email'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   const rolEl = document.getElementById('yeni-rol'); if (rolEl) rolEl.value = '';
   try {
-    const data = await fetch('/api/kullanicilar').then(r=>r.json());
+    const data = await fetch('/api/kullanicilar?t=' + Date.now()).then(r=>r.json());
     const html = data.map(k => {
       const benim = k.id === window._currentUserId;
       const toggleBtn = benim ? '' : k.aktif
@@ -43,7 +43,12 @@ async function kullanicilariYukle() {
 }
 
 async function rolDegistir(id, yeniRol) {
-  await fetch('/api/kullanici-rol/'+id, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({rol:yeniRol}) });
+  const res = await fetch('/api/kullanici-rol/'+id, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({rol:yeniRol}) });
+  if (!res.ok) {
+    const d = await res.json().catch(()=>({}));
+    alert(d.message || 'Rol değiştirilemedi.');
+    kullanicilariYukle();
+  }
 }
 
 async function kullaniciDavetEt() {
@@ -72,7 +77,11 @@ async function kullaniciDavetEt() {
 
 async function kullaniciPasifYap(id) {
   if (!confirm('Bu kullanıcıyı pasif yapmak istediğinize emin misiniz?')) return;
-  await fetch('/api/kullanici-pasif/'+id, {method:'POST'});
+  const res = await fetch('/api/kullanici-pasif/'+id, {method:'POST'});
+  if (!res.ok) {
+    const d = await res.json().catch(()=>({}));
+    alert(d.message || 'Bir hata oluştu.');
+  }
   kullanicilariYukle();
   ayarlarSayfasiYukle();
 }
@@ -105,7 +114,11 @@ async function silmeOnaylaAction() {
   if (!_silOnayId) return;
   const id = _silOnayId;
   silmeModalKapat();
-  await fetch('/api/kullanici-kalici-sil/'+id, {method:'POST'});
+  const res = await fetch('/api/kullanici-kalici-sil/'+id, {method:'POST'});
+  if (!res.ok) {
+    const d = await res.json().catch(()=>({}));
+    alert(d.message || 'Silme işlemi başarısız.');
+  }
   kullanicilariYukle();
   ayarlarSayfasiYukle();
 }

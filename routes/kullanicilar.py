@@ -48,7 +48,9 @@ def kullanici_listesi():
     """)
     kullanicilar = cursor.fetchall()
     conn.close()
-    return jsonify([dict(k) for k in kullanicilar])
+    resp = jsonify([dict(k) for k in kullanicilar])
+    resp.headers['Cache-Control'] = 'no-store'
+    return resp
 
 
 @kullanicilar_bp.route('/api/kullanici-davet', methods=['POST'])
@@ -124,7 +126,7 @@ def kullanici_davet():
         return jsonify({'message': 'Token oluşturma hatası.'}), 500
 
     rol_label = 'Yönetici' if rol == 'yonetici' else 'Kullanıcı'
-    base_url = os.getenv('BASE_URL', 'http://127.0.0.1:5000')
+    base_url = (os.getenv('BASE_URL') or request.url_root.rstrip('/')).rstrip('/')
     davet_link = f"{base_url}/hesap-olustur/{token}"
     icerik = f"""
         <p style="color:#6b7a90;font-size:14px;line-height:1.6;margin-bottom:20px;">
@@ -138,8 +140,10 @@ def kullanici_davet():
         <p style="color:#b0bec8;font-size:12px;margin-top:20px;">Bu link <strong>7 gün</strong> geçerlidir ve yalnızca bir kez kullanılabilir.</p>
         <p style="color:#b0bec8;font-size:12px;margin-top:6px;">Bu daveti siz talep etmediyseniz bu e-postayı görmezden gelebilirsiniz.</p>
     """
-    mail_gonger_bg([email], "Sporthink — Hesabınıza Davet Edildiniz", mail_template(icerik))
-    return jsonify({'ok': True})
+    mail_ok, _ = mail_gonger([email], "Sporthink — Hesabınıza Davet Edildiniz", mail_template(icerik))
+    if mail_ok:
+        return jsonify({'ok': True})
+    return jsonify({'ok': True, 'mail_basarisiz': True, 'davet_link': davet_link})
 
 
 @kullanicilar_bp.route('/api/kullanici-rol/<int:kullanici_id>', methods=['POST'])
@@ -151,12 +155,15 @@ def kullanici_rol(kullanici_id):
     yeni_rol = data.get('rol', 'kullanici')
     if yeni_rol not in ['yonetici', 'kullanici']:
         return jsonify({'message': 'Geçersiz rol.'}), 400
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE kullanicilar SET rol = %s WHERE id = %s", (yeni_rol, kullanici_id))
-    conn.commit()
-    conn.close()
-    return jsonify({'ok': True})
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE kullanicilar SET rol = %s WHERE id = %s", (yeni_rol, kullanici_id))
+        conn.commit()
+        conn.close()
+        return jsonify({'ok': True})
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 
 @kullanicilar_bp.route('/api/kullanici-pasif/<int:kullanici_id>', methods=['POST'])
@@ -166,12 +173,15 @@ def kullanici_pasif(kullanici_id):
         return jsonify({'message': 'Yetkisiz erişim.'}), 403
     if kullanici_id == session.get('user_id'):
         return jsonify({'message': 'Kendi hesabınızı pasif yapamazsınız.'}), 400
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE kullanicilar SET aktif = FALSE WHERE id = %s", (kullanici_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({'ok': True})
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE kullanicilar SET aktif = FALSE WHERE id = %s", (kullanici_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'ok': True})
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 
 @kullanicilar_bp.route('/api/kullanici-aktif/<int:kullanici_id>', methods=['POST'])
@@ -179,12 +189,15 @@ def kullanici_pasif(kullanici_id):
 def kullanici_aktif(kullanici_id):
     if session.get('user_rol') != 'yonetici':
         return jsonify({'message': 'Yetkisiz erişim.'}), 403
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE kullanicilar SET aktif = TRUE WHERE id = %s", (kullanici_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({'ok': True})
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE kullanicilar SET aktif = TRUE WHERE id = %s", (kullanici_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'ok': True})
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 
 @kullanicilar_bp.route('/api/kullanici-kalici-sil/<int:kullanici_id>', methods=['POST'])
@@ -194,16 +207,19 @@ def kullanici_kalici_sil(kullanici_id):
         return jsonify({'message': 'Yetkisiz erişim.'}), 403
     if kullanici_id == session.get('user_id'):
         return jsonify({'message': 'Kendi hesabınızı silemezsiniz.'}), 400
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute(
-        "DELETE FROM sifre_sifirlama WHERE email = (SELECT email FROM kullanicilar WHERE id = %s)",
-        (kullanici_id,)
-    )
-    cursor.execute("DELETE FROM kullanicilar WHERE id = %s", (kullanici_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({'ok': True})
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            "DELETE FROM sifre_sifirlama WHERE email = (SELECT email FROM kullanicilar WHERE id = %s)",
+            (kullanici_id,)
+        )
+        cursor.execute("DELETE FROM kullanicilar WHERE id = %s", (kullanici_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'ok': True})
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 
 @kullanicilar_bp.route('/api/sistem-ayarlari')
