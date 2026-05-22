@@ -70,6 +70,8 @@ function filtreSifirla() {
 
   document.querySelectorAll('.nav-altkat-item').forEach(i => i.classList.remove('active'));
 
+  document.querySelectorAll('.nav-filter-group').forEach(g => g.classList.remove('open'));
+
   updateCinsiyetUI();
   updateAnaGrupUI();
   updateMarkaUI();
