@@ -58,6 +58,7 @@ async function kullaniciDavetEt() {
   if (res.ok) {
     document.getElementById('yeni-ad').value=''; document.getElementById('yeni-email').value=''; document.getElementById('yeni-rol').value='';
     kullanicilariYukle();
+    ayarlarSayfasiYukle();
     if (data.mail_basarisiz && data.davet_link) {
       msg.className='profil-msg ok';
       msg.innerHTML='✓ Kullanıcı oluşturuldu. Mail gönderilemedi — daveti manuel paylaş:<br><a href="'+data.davet_link+'" target="_blank" style="word-break:break-all;color:#e02020;">'+data.davet_link+'</a>';
@@ -73,6 +74,7 @@ async function kullaniciPasifYap(id) {
   if (!confirm('Bu kullanıcıyı pasif yapmak istediğinize emin misiniz?')) return;
   await fetch('/api/kullanici-pasif/'+id, {method:'POST'});
   kullanicilariYukle();
+  ayarlarSayfasiYukle();
 }
 
 let _silOnayId = null;
@@ -94,4 +96,5 @@ async function silmeOnaylaAction() {
   silmeModalKapat();
   await fetch('/api/kullanici-kalici-sil/'+id, {method:'POST'});
   kullanicilariYukle();
+  ayarlarSayfasiYukle();
 }
