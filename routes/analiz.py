@@ -34,7 +34,7 @@ def filters():
         gruplar = [r['ana_grup'] for r in cursor.fetchall()]
         cursor.execute("SELECT DISTINCT alt_kategori FROM urun_analiz WHERE alt_kategori != 'nan' ORDER BY alt_kategori")
         kategoriler = [r['alt_kategori'] for r in cursor.fetchall()]
-        cursor.execute("SELECT DISTINCT hafta_no FROM urun_analiz WHERE hafta_no IS NOT NULL ORDER BY hafta_no")
+        cursor.execute("SELECT DISTINCT hafta_no FROM urun_analiz WHERE hafta_no = 1 ORDER BY hafta_no")
         haftalar = [r['hafta_no'] for r in cursor.fetchall()]
         cursor.execute("SELECT DISTINCT sezon FROM urun_analiz WHERE sezon IS NOT NULL ORDER BY sezon")
         sezonlar = [r['sezon'] for r in cursor.fetchall()]
