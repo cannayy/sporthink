@@ -78,9 +78,14 @@ async function kullaniciPasifYap(id) {
 }
 
 async function kullaniciAktifYap(id) {
-  await fetch('/api/kullanici-aktif/'+id, {method:'POST'});
-  kullanicilariYukle();
-  ayarlarSayfasiYukle();
+  const res = await fetch('/api/kullanici-aktif/'+id, {method:'POST'});
+  if (!res.ok) {
+    const d = await res.json().catch(()=>({}));
+    alert(d.message || 'Bir hata oluştu.');
+    return;
+  }
+  await kullanicilariYukle();
+  if (typeof ayarlarSayfasiYukle === 'function') ayarlarSayfasiYukle();
 }
 
 let _silOnayId = null;
