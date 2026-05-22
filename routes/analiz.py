@@ -24,21 +24,27 @@ def index():
 @analiz_bp.route('/api/filters')
 @login_required
 def filters():
-    conn = get_db()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("SELECT DISTINCT cinsiyet FROM urun_analiz WHERE cinsiyet != 'nan' ORDER BY cinsiyet")
-    cinsiyetler = [r['cinsiyet'] for r in cursor.fetchall()]
-    cursor.execute("SELECT DISTINCT ana_grup FROM urun_analiz WHERE ana_grup != 'nan' ORDER BY ana_grup")
-    gruplar = [r['ana_grup'] for r in cursor.fetchall()]
-    cursor.execute("SELECT DISTINCT alt_kategori FROM urun_analiz WHERE alt_kategori != 'nan' ORDER BY alt_kategori")
-    kategoriler = [r['alt_kategori'] for r in cursor.fetchall()]
-    cursor.execute("SELECT DISTINCT hafta_no FROM urun_analiz WHERE hafta_no = 1 ORDER BY hafta_no")
-    haftalar = [r['hafta_no'] for r in cursor.fetchall()]
-    cursor.execute("SELECT DISTINCT sezon FROM urun_analiz WHERE sezon IS NOT NULL ORDER BY sezon")
-    sezonlar = [r['sezon'] for r in cursor.fetchall()]
-    cursor.execute("SELECT marka FROM (SELECT DISTINCT marka FROM urun_analiz WHERE marka IS NOT NULL AND marka != 'nan') sub ORDER BY LOWER(marka)")
-    markalar = [r['marka'] for r in cursor.fetchall()]
-    conn.close()
+    conn = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute("SELECT DISTINCT cinsiyet FROM urun_analiz WHERE cinsiyet != 'nan' ORDER BY cinsiyet")
+        cinsiyetler = [r['cinsiyet'] for r in cursor.fetchall()]
+        cursor.execute("SELECT DISTINCT ana_grup FROM urun_analiz WHERE ana_grup != 'nan' ORDER BY ana_grup")
+        gruplar = [r['ana_grup'] for r in cursor.fetchall()]
+        cursor.execute("SELECT DISTINCT alt_kategori FROM urun_analiz WHERE alt_kategori != 'nan' ORDER BY alt_kategori")
+        kategoriler = [r['alt_kategori'] for r in cursor.fetchall()]
+        cursor.execute("SELECT DISTINCT hafta_no FROM urun_analiz WHERE hafta_no IS NOT NULL ORDER BY hafta_no")
+        haftalar = [r['hafta_no'] for r in cursor.fetchall()]
+        cursor.execute("SELECT DISTINCT sezon FROM urun_analiz WHERE sezon IS NOT NULL ORDER BY sezon")
+        sezonlar = [r['sezon'] for r in cursor.fetchall()]
+        cursor.execute("SELECT marka FROM (SELECT DISTINCT marka FROM urun_analiz WHERE marka IS NOT NULL AND marka != 'nan') sub ORDER BY LOWER(marka)")
+        markalar = [r['marka'] for r in cursor.fetchall()]
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
+    finally:
+        if conn:
+            conn.close()
     return jsonify({
         "cinsiyetler": cinsiyetler,
         "ana_gruplar": gruplar,
@@ -53,47 +59,60 @@ def filters():
 @analiz_bp.route('/api/alt_kategoriler')
 @login_required
 def alt_kategoriler():
-    conn = get_db()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    ana_grup = request.args.get('ana_grup', '')
-    if ana_grup:
-        ag_list = [a.strip() for a in ana_grup.split(',') if a.strip()]
-        if len(ag_list) == 1:
-            cursor.execute(
-                "SELECT DISTINCT alt_kategori FROM urun_analiz WHERE ana_grup = %s AND alt_kategori != 'nan' ORDER BY alt_kategori",
-                (ag_list[0],)
-            )
+    conn = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        ana_grup = request.args.get('ana_grup', '')
+        if ana_grup:
+            ag_list = [a.strip() for a in ana_grup.split(',') if a.strip()]
+            if len(ag_list) == 1:
+                cursor.execute(
+                    "SELECT DISTINCT alt_kategori FROM urun_analiz WHERE ana_grup = %s AND alt_kategori != 'nan' ORDER BY alt_kategori",
+                    (ag_list[0],)
+                )
+            else:
+                placeholders = ','.join(['%s'] * len(ag_list))
+                cursor.execute(
+                    f"SELECT DISTINCT alt_kategori FROM urun_analiz WHERE ana_grup IN ({placeholders}) AND alt_kategori != 'nan' ORDER BY alt_kategori",
+                    ag_list
+                )
         else:
-            placeholders = ','.join(['%s'] * len(ag_list))
-            cursor.execute(
-                f"SELECT DISTINCT alt_kategori FROM urun_analiz WHERE ana_grup IN ({placeholders}) AND alt_kategori != 'nan' ORDER BY alt_kategori",
-                ag_list
-            )
-    else:
-        cursor.execute("SELECT DISTINCT alt_kategori FROM urun_analiz WHERE alt_kategori != 'nan' ORDER BY alt_kategori")
-    kategoriler = [r['alt_kategori'] for r in cursor.fetchall()]
-    conn.close()
+            cursor.execute("SELECT DISTINCT alt_kategori FROM urun_analiz WHERE alt_kategori != 'nan' ORDER BY alt_kategori")
+        kategoriler = [r['alt_kategori'] for r in cursor.fetchall()]
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
+    finally:
+        if conn:
+            conn.close()
     return jsonify(kategoriler)
 
 
 @analiz_bp.route('/api/bestseller')
 @login_required
 def bestseller():
-    conn = get_db()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        limit = int(request.args.get('limit', 10))
+        w_gmroi = float(request.args.get('w_gmroi', 0.40))
+        w_st = float(request.args.get('w_st', 0.35))
+        w_cover = float(request.args.get('w_cover', 0.25))
+        min_st = float(request.args.get('min_st', 0.55))
+        max_cover = float(request.args.get('max_cover', 12.0))
+    except (ValueError, TypeError):
+        return jsonify({'message': 'Geçersiz parametre değeri.'}), 400
+    conn = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
     cinsiyet = request.args.get('cinsiyet', '')
     ana_grup = request.args.get('ana_grup', '')
     alt_kategori = request.args.get('alt_kategori', '')
     marka = request.args.get('marka', '')
     donem_tip = request.args.get('donem_tip', 'hafta')
     donem_deger = request.args.get('donem_deger', '1')
-    limit = int(request.args.get('limit', 10))
     sezon = request.args.get('sezon', '')
-    w_gmroi = float(request.args.get('w_gmroi', 0.40))
-    w_st = float(request.args.get('w_st', 0.35))
-    w_cover = float(request.args.get('w_cover', 0.25))
-    min_st = float(request.args.get('min_st', 0.55))
-    max_cover = float(request.args.get('max_cover', 12.0))
     where, params = [], []
     cinsiyet_filter(where, params, cinsiyet)
     ana_grup_filter(where, params, ana_grup)
@@ -150,28 +169,40 @@ def bestseller():
     {order_clause}
     LIMIT %s"""
     params.append(limit)
-    cursor.execute(query, params)
-    sonuclar = cursor.fetchall()
-    conn.close()
+    try:
+        cursor.execute(query, params)
+        sonuclar = cursor.fetchall()
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
+    finally:
+        if conn:
+            conn.close()
     return jsonify(list(sonuclar))
 
 
 @analiz_bp.route('/api/worstseller')
 @login_required
 def worstseller():
-    conn = get_db()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        limit = int(request.args.get('limit', 10))
+        w_gmroi = float(request.args.get('w_gmroi', 0.20))
+        w_st = float(request.args.get('w_st', 0.25))
+        w_cover = float(request.args.get('w_cover', 0.55))
+    except (ValueError, TypeError):
+        return jsonify({'message': 'Geçersiz parametre değeri.'}), 400
+    conn = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
     cinsiyet = request.args.get('cinsiyet', '')
     ana_grup = request.args.get('ana_grup', '')
     alt_kategori = request.args.get('alt_kategori', '')
     marka = request.args.get('marka', '')
     donem_tip = request.args.get('donem_tip', 'hafta')
     donem_deger = request.args.get('donem_deger', '1')
-    limit = int(request.args.get('limit', 10))
     sezon = request.args.get('sezon', '')
-    w_gmroi = float(request.args.get('w_gmroi', 0.20))
-    w_st = float(request.args.get('w_st', 0.25))
-    w_cover = float(request.args.get('w_cover', 0.55))
     where, params = [], []
     cinsiyet_filter(where, params, cinsiyet)
     ana_grup_filter(where, params, ana_grup)
@@ -223,17 +254,28 @@ def worstseller():
         GROUP BY stok_kodu,stok_kodu_aciklama,marka,ana_grup,alt_kategori,cinsiyet,psf,regule_psf,mu,gorsel_url,sezon
         {order_clause} LIMIT %s"""
     params.append(limit)
-    cursor.execute(query, params)
-    sonuclar = cursor.fetchall()
-    conn.close()
+    try:
+        cursor.execute(query, params)
+        sonuclar = cursor.fetchall()
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
+    finally:
+        if conn:
+            conn.close()
     return jsonify(list(sonuclar))
 
 
 @analiz_bp.route('/api/export/top10')
 @login_required
 def export_top10():
-    conn = get_db()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        w_gmroi_bs = float(request.args.get('w_gmroi', 0.40))
+        w_st_bs    = float(request.args.get('w_st', 0.35))
+        w_cover_bs = float(request.args.get('w_cover', 0.25))
+        min_st     = float(request.args.get('min_st', 0.55))
+        max_cover  = float(request.args.get('max_cover', 12.0))
+    except (ValueError, TypeError):
+        return jsonify({'message': 'Geçersiz parametre değeri.'}), 400
 
     cinsiyet    = request.args.get('cinsiyet', '')
     ana_grup    = request.args.get('ana_grup', '')
@@ -241,11 +283,13 @@ def export_top10():
     donem_tip   = request.args.get('donem_tip', 'hafta')
     donem_deger = request.args.get('donem_deger', '1')
     sezon       = request.args.get('sezon', '')
-    w_gmroi_bs  = float(request.args.get('w_gmroi', 0.40))
-    w_st_bs     = float(request.args.get('w_st', 0.35))
-    w_cover_bs  = float(request.args.get('w_cover', 0.25))
-    min_st      = float(request.args.get('min_st', 0.55))
-    max_cover   = float(request.args.get('max_cover', 12.0))
+
+    conn = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
 
     def build_where(extra_filters=None):
         where, params = [], []
@@ -286,31 +330,36 @@ def export_top10():
             )::numeric, 4) AS bs_skoru
         FROM urun_analiz {where_bs}
         ORDER BY bs_skoru DESC LIMIT 10"""
-    cursor.execute(bs_query, params_bs)
-    bs_rows = cursor.fetchall()
+    try:
+        cursor.execute(bs_query, params_bs)
+        bs_rows = cursor.fetchall()
 
-    where_ws, params_ws = build_where()
-    ws_query = f"""
-        SELECT stok_kodu, stok_kodu_aciklama, marka, ana_grup, alt_kategori,
-            cinsiyet, psf, mu, sezon,
-            SUM(toplam_satis_miktar) as toplam_satis,
-            ROUND(SUM(ciro)::numeric, 0) as toplam_ciro,
-            ROUND(SUM(toplam_kar)::numeric, 0) as toplam_kar,
-            AVG(indirim_orani) as ort_indirim,
-            MAX(sell_through) as sell_through,
-            MAX(periyot_cover) as periyot_cover,
-            ROUND(AVG(NULLIF(gmroi,0))::numeric, 2) as ort_gmroi,
-            ROUND((
-                0.20*(1 - AVG(NULLIF(gmroi,0))/NULLIF(MAX(AVG(NULLIF(gmroi,0))) OVER(),0)) +
-                0.25*(1 - COALESCE(MAX(sell_through),0)) +
-                0.55*LEAST(MAX(periyot_cover)/19.0,1)
-            )::numeric, 4) as ws_skoru
-        FROM urun_analiz {where_ws}
-        GROUP BY stok_kodu,stok_kodu_aciklama,marka,ana_grup,alt_kategori,cinsiyet,psf,mu,sezon
-        ORDER BY ws_skoru DESC LIMIT 10"""
-    cursor.execute(ws_query, params_ws)
-    ws_rows = cursor.fetchall()
-    conn.close()
+        where_ws, params_ws = build_where()
+        ws_query = f"""
+            SELECT stok_kodu, stok_kodu_aciklama, marka, ana_grup, alt_kategori,
+                cinsiyet, psf, mu, sezon,
+                SUM(toplam_satis_miktar) as toplam_satis,
+                ROUND(SUM(ciro)::numeric, 0) as toplam_ciro,
+                ROUND(SUM(toplam_kar)::numeric, 0) as toplam_kar,
+                AVG(indirim_orani) as ort_indirim,
+                MAX(sell_through) as sell_through,
+                MAX(periyot_cover) as periyot_cover,
+                ROUND(AVG(NULLIF(gmroi,0))::numeric, 2) as ort_gmroi,
+                ROUND((
+                    0.20*(1 - AVG(NULLIF(gmroi,0))/NULLIF(MAX(AVG(NULLIF(gmroi,0))) OVER(),0)) +
+                    0.25*(1 - COALESCE(MAX(sell_through),0)) +
+                    0.55*LEAST(MAX(periyot_cover)/19.0,1)
+                )::numeric, 4) as ws_skoru
+            FROM urun_analiz {where_ws}
+            GROUP BY stok_kodu,stok_kodu_aciklama,marka,ana_grup,alt_kategori,cinsiyet,psf,mu,sezon
+            ORDER BY ws_skoru DESC LIMIT 10"""
+        cursor.execute(ws_query, params_ws)
+        ws_rows = cursor.fetchall()
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
+    finally:
+        if conn:
+            conn.close()
 
     wb = Workbook()
 

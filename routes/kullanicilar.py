@@ -14,14 +14,22 @@ kullanicilar_bp = Blueprint('kullanicilar', __name__)
 @kullanicilar_bp.route('/api/benim-bilgilerim')
 @login_required
 def benim_bilgilerim():
-    conn = get_db()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute(
-        "SELECT id, email, ad, rol, son_giris, giris_sayisi FROM kullanicilar WHERE id = %s",
-        (session['user_id'],)
-    )
-    user = cursor.fetchone()
-    conn.close()
+    conn = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute(
+            "SELECT id, email, ad, rol, son_giris, giris_sayisi FROM kullanicilar WHERE id = %s",
+            (session['user_id'],)
+        )
+        user = cursor.fetchone()
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
+    finally:
+        if conn:
+            conn.close()
+    if not user:
+        return jsonify({'message': 'Kullanıcı bulunamadı.'}), 404
     return jsonify({
         'id': user['id'],
         'email': user['email'],
@@ -35,19 +43,25 @@ def benim_bilgilerim():
 @kullanicilar_bp.route('/api/kullanicilar')
 @login_required
 def kullanici_listesi():
-    conn = get_db()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("""
-        SELECT k.id, k.email, k.ad, k.aktif, k.rol, k.created_at,
-               (k.aktif = FALSE AND EXISTS (
-                   SELECT 1 FROM sifre_sifirlama s
-                   WHERE s.email = k.email AND s.used = FALSE AND s.expires_at > NOW()
-               )) AS beklemede
-        FROM kullanicilar k
-        ORDER BY k.created_at DESC
-    """)
-    kullanicilar = cursor.fetchall()
-    conn.close()
+    conn = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute("""
+            SELECT k.id, k.email, k.ad, k.aktif, k.rol, k.created_at,
+                   (k.aktif = FALSE AND EXISTS (
+                       SELECT 1 FROM sifre_sifirlama s
+                       WHERE s.email = k.email AND s.used = FALSE AND s.expires_at > NOW()
+                   )) AS beklemede
+            FROM kullanicilar k
+            ORDER BY k.created_at DESC
+        """)
+        kullanicilar = cursor.fetchall()
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
+    finally:
+        if conn:
+            conn.close()
     resp = jsonify([dict(k) for k in kullanicilar])
     resp.headers['Cache-Control'] = 'no-store'
     return resp
@@ -74,8 +88,8 @@ def kullanici_davet():
         cursor.execute("SELECT aktif FROM kullanicilar WHERE email = %s", (email,))
         mevcut = cursor.fetchone()
         conn.close()
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
 
     if mevcut:
         if mevcut['aktif']:
@@ -88,8 +102,8 @@ def kullanici_davet():
                 cursor.execute("DELETE FROM kullanicilar WHERE email = %s", (email,))
                 conn.commit()
                 conn.close()
-            except Exception as e:
-                return jsonify({'message': str(e)}), 500
+            except Exception:
+                return jsonify({'message': 'Sunucu hatası.'}), 500
 
     dummy_hash = bcrypt.hashpw(secrets.token_hex(16).encode(), bcrypt.gensalt()).decode()
     try:
@@ -101,8 +115,8 @@ def kullanici_davet():
         )
         conn.commit()
         conn.close()
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
 
     token = secrets.token_urlsafe(32)
     try:
@@ -160,8 +174,8 @@ def kullanici_rol(kullanici_id):
         conn.commit()
         conn.close()
         return jsonify({'ok': True})
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
 
 
 @kullanicilar_bp.route('/api/kullanici-pasif/<int:kullanici_id>', methods=['POST'])
@@ -178,8 +192,8 @@ def kullanici_pasif(kullanici_id):
         conn.commit()
         conn.close()
         return jsonify({'ok': True})
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
 
 
 @kullanicilar_bp.route('/api/kullanici-aktif/<int:kullanici_id>', methods=['POST'])
@@ -194,8 +208,8 @@ def kullanici_aktif(kullanici_id):
         conn.commit()
         conn.close()
         return jsonify({'ok': True})
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
 
 
 @kullanicilar_bp.route('/api/kullanici-kalici-sil/<int:kullanici_id>', methods=['POST'])
@@ -216,8 +230,8 @@ def kullanici_kalici_sil(kullanici_id):
         conn.commit()
         conn.close()
         return jsonify({'ok': True})
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
 
 
 @kullanicilar_bp.route('/api/sistem-ayarlari')
@@ -254,60 +268,63 @@ def sistem_ayarlari_kaydet():
         conn.commit()
         conn.close()
         return jsonify({'ok': True})
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
 
 
 @kullanicilar_bp.route('/api/sistem-bilgisi')
 @login_required
 def sistem_bilgisi():
-    conn = get_db()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    conn = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    # Global istatistikler
-    cursor.execute("""
-        SELECT COUNT(DISTINCT stok_kodu)    AS urun_sayisi,
-               COUNT(DISTINCT hafta_no)     AS hafta_sayisi,
-               COUNT(DISTINCT alt_kategori) AS kategori_sayisi,
-               COUNT(DISTINCT marka)        AS marka_sayisi,
-               MIN(urun_giris_tarihi)       AS baslangic,
-               MAX(urun_giris_tarihi)       AS bitis
-        FROM urun_analiz
-    """)
-    global_row = cursor.fetchone()
+        cursor.execute("""
+            SELECT COUNT(DISTINCT stok_kodu)    AS urun_sayisi,
+                   COUNT(DISTINCT hafta_no)     AS hafta_sayisi,
+                   COUNT(DISTINCT alt_kategori) AS kategori_sayisi,
+                   COUNT(DISTINCT marka)        AS marka_sayisi,
+                   MIN(urun_giris_tarihi)       AS baslangic,
+                   MAX(urun_giris_tarihi)       AS bitis
+            FROM urun_analiz
+        """)
+        global_row = cursor.fetchone()
 
-    cursor.execute("SELECT COUNT(*) AS kullanici_sayisi FROM kullanicilar WHERE aktif = TRUE")
-    kullanici = cursor.fetchone()
+        cursor.execute("SELECT COUNT(*) AS kullanici_sayisi FROM kullanicilar WHERE aktif = TRUE")
+        kullanici = cursor.fetchone()
 
-    # Sezon bazlı detaylar
-    cursor.execute("""
-        SELECT sezon,
-               COUNT(DISTINCT stok_kodu)    AS urun_sayisi,
-               COUNT(DISTINCT hafta_no)     AS hafta_sayisi,
-               COUNT(DISTINCT alt_kategori) AS kategori_sayisi,
-               COUNT(DISTINCT marka)        AS marka_sayisi,
-               MIN(urun_giris_tarihi)       AS baslangic,
-               MAX(urun_giris_tarihi)       AS bitis
-        FROM urun_analiz
-        WHERE sezon IS NOT NULL AND sezon != 'nan'
-        GROUP BY sezon
-        ORDER BY sezon
-    """)
-    sezon_rows = cursor.fetchall()
+        cursor.execute("""
+            SELECT sezon,
+                   COUNT(DISTINCT stok_kodu)    AS urun_sayisi,
+                   COUNT(DISTINCT hafta_no)     AS hafta_sayisi,
+                   COUNT(DISTINCT alt_kategori) AS kategori_sayisi,
+                   COUNT(DISTINCT marka)        AS marka_sayisi,
+                   MIN(urun_giris_tarihi)       AS baslangic,
+                   MAX(urun_giris_tarihi)       AS bitis
+            FROM urun_analiz
+            WHERE sezon IS NOT NULL AND sezon != 'nan'
+            GROUP BY sezon
+            ORDER BY sezon
+        """)
+        sezon_rows = cursor.fetchall()
 
-    # En güncel sezon = en büyük giriş tarihine sahip sezon
-    cursor.execute("""
-        SELECT sezon FROM urun_analiz
-        WHERE sezon IS NOT NULL AND sezon != 'nan'
-        GROUP BY sezon
-        ORDER BY MAX(urun_giris_tarihi) DESC NULLS LAST
-        LIMIT 1
-    """)
-    son_sezon_row = cursor.fetchone()
+        cursor.execute("""
+            SELECT sezon FROM urun_analiz
+            WHERE sezon IS NOT NULL AND sezon != 'nan'
+            GROUP BY sezon
+            ORDER BY MAX(urun_giris_tarihi) DESC NULLS LAST
+            LIMIT 1
+        """)
+        son_sezon_row = cursor.fetchone()
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
+    finally:
+        if conn:
+            conn.close()
+
     sezonlar = [r['sezon'] for r in sezon_rows]
     aktif_sezon = son_sezon_row['sezon'] if son_sezon_row else (sezonlar[-1] if sezonlar else '—')
-
-    conn.close()
 
     sezon_detaylari = [
         {
@@ -340,33 +357,41 @@ def sistem_bilgisi():
 @login_required
 def profil_guncelle():
     data = request.get_json()
+    if not data:
+        return jsonify({'message': 'Veri bulunamadı.'}), 400
     ad = data.get('ad', '').strip()
     mevcut_sifre = data.get('mevcut_sifre', '')
     yeni_sifre = data.get('yeni_sifre', '')
 
-    conn = get_db()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("SELECT * FROM kullanicilar WHERE id = %s", (session['user_id'],))
-    user = cursor.fetchone()
+    conn = None
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute("SELECT sifre_hash FROM kullanicilar WHERE id = %s", (session['user_id'],))
+        user = cursor.fetchone()
+        if not user:
+            return jsonify({'message': 'Kullanıcı bulunamadı.'}), 404
 
-    if ad:
-        cursor.execute("UPDATE kullanicilar SET ad = %s WHERE id = %s", (ad, session['user_id']))
-        session['user_ad'] = ad
+        if ad:
+            cursor.execute("UPDATE kullanicilar SET ad = %s WHERE id = %s", (ad, session['user_id']))
+            session['user_ad'] = ad
 
-    if mevcut_sifre and yeni_sifre:
-        try:
-            gecerli = bcrypt.checkpw(mevcut_sifre.encode('utf-8'), user['sifre_hash'].encode('utf-8'))
-        except Exception:
-            gecerli = False
-        if not gecerli:
+        if mevcut_sifre and yeni_sifre:
+            try:
+                gecerli = bcrypt.checkpw(mevcut_sifre.encode('utf-8'), user['sifre_hash'].encode('utf-8'))
+            except Exception:
+                gecerli = False
+            if not gecerli:
+                return jsonify({'message': 'Mevcut şifre hatalı.'}), 400
+            if len(yeni_sifre) < 6:
+                return jsonify({'message': 'Yeni şifre en az 6 karakter olmalıdır.'}), 400
+            yeni_hash = bcrypt.hashpw(yeni_sifre.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            cursor.execute("UPDATE kullanicilar SET sifre_hash = %s WHERE id = %s", (yeni_hash, session['user_id']))
+
+        conn.commit()
+    except Exception:
+        return jsonify({'message': 'Sunucu hatası.'}), 500
+    finally:
+        if conn:
             conn.close()
-            return jsonify({'message': 'Mevcut şifre hatalı.'}), 400
-        if len(yeni_sifre) < 6:
-            conn.close()
-            return jsonify({'message': 'Yeni şifre en az 6 karakter olmalıdır.'}), 400
-        yeni_hash = bcrypt.hashpw(yeni_sifre.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        cursor.execute("UPDATE kullanicilar SET sifre_hash = %s WHERE id = %s", (yeni_hash, session['user_id']))
-
-    conn.commit()
-    conn.close()
     return jsonify({'ok': True})

@@ -33,7 +33,7 @@ def login():
     try:
         gecerli = bcrypt.checkpw(password.encode('utf-8'), sifre_hash.encode('utf-8'))
     except Exception:
-        gecerli = (password == sifre_hash)
+        gecerli = False
     if not gecerli:
         conn.close()
         return jsonify({'message': 'E-posta veya şifre hatalı.'}), 401
