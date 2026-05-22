@@ -8,9 +8,9 @@ async function kullanicilariYukle() {
     const data = await fetch('/api/kullanicilar').then(r=>r.json());
     const html = data.map(k => {
       const benim = k.id === window._currentUserId;
-      const pasifBtn = (k.aktif && !benim)
+      const toggleBtn = benim ? '' : k.aktif
         ? `<button onclick="kullaniciPasifYap(${k.id})" class="btn-mini warning">Pasif Yap</button>`
-        : '';
+        : `<button onclick="kullaniciAktifYap(${k.id})" class="btn-mini success">Aktif Yap</button>`;
       const silBtn = !benim
         ? `<button onclick="kullaniciKaliciSil(${k.id},'${(k.ad||k.email).replace(/'/g,"\\'")}')" class="btn-mini danger">Sil</button>`
         : '<span style="color:var(--border-md);font-size:11px">—</span>';
@@ -32,7 +32,7 @@ async function kullanicilariYukle() {
         }</td>
         <td class="tr">
           <div style="display:flex;gap:6px;justify-content:flex-end;align-items:center">
-            ${pasifBtn}${silBtn}
+            ${toggleBtn}${silBtn}
           </div>
         </td>
       </tr>`;
@@ -73,6 +73,12 @@ async function kullaniciDavetEt() {
 async function kullaniciPasifYap(id) {
   if (!confirm('Bu kullanıcıyı pasif yapmak istediğinize emin misiniz?')) return;
   await fetch('/api/kullanici-pasif/'+id, {method:'POST'});
+  kullanicilariYukle();
+  ayarlarSayfasiYukle();
+}
+
+async function kullaniciAktifYap(id) {
+  await fetch('/api/kullanici-aktif/'+id, {method:'POST'});
   kullanicilariYukle();
   ayarlarSayfasiYukle();
 }

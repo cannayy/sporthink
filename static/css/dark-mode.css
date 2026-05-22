@@ -179,6 +179,8 @@ body.dark .btn-mini.danger { color: var(--red); border-color: rgba(200,66,56,0.3
 body.dark .btn-mini.danger:hover { background: rgba(200,66,56,0.06); }
 body.dark .btn-mini.warning { color: var(--blue); border-color: rgba(82,112,166,0.26); }
 body.dark .btn-mini.warning:hover { background: rgba(82,112,166,0.06); }
+body.dark .btn-mini.success { color: #4ade80; border-color: rgba(74,222,128,0.26); }
+body.dark .btn-mini.success:hover { background: rgba(74,222,128,0.06); }
 /* ── ROZETLER & DURUM ── */
 body.dark .ku-durum.aktif,
 body.dark .st-good { background: rgba(78,138,102,0.10); color: var(--green); }

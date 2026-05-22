@@ -54,6 +54,8 @@
 .btn-mini.danger:hover { background: #fff0f0; }
 .btn-mini.warning { color: #2563eb; border-color: #bfdbfe; }
 .btn-mini.warning:hover { background: #eff6ff; }
+.btn-mini.success { color: #16a34a; border-color: #86efac; }
+.btn-mini.success:hover { background: #f0fdf4; }
 .ku-tablo { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .ku-tablo colgroup col:nth-child(1) { width: 20%; }
 .ku-tablo colgroup col:nth-child(2) { width: 30%; }

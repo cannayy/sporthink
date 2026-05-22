@@ -174,6 +174,19 @@ def kullanici_pasif(kullanici_id):
     return jsonify({'ok': True})
 
 
+@kullanicilar_bp.route('/api/kullanici-aktif/<int:kullanici_id>', methods=['POST'])
+@login_required
+def kullanici_aktif(kullanici_id):
+    if session.get('user_rol') != 'yonetici':
+        return jsonify({'message': 'Yetkisiz erişim.'}), 403
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE kullanicilar SET aktif = TRUE WHERE id = %s", (kullanici_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'ok': True})
+
+
 @kullanicilar_bp.route('/api/kullanici-kalici-sil/<int:kullanici_id>', methods=['POST'])
 @login_required
 def kullanici_kalici_sil(kullanici_id):
