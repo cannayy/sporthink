@@ -89,11 +89,7 @@ async function init() {
 function buildDonemSelect(data) {
   const sel = document.getElementById('donem-select');
   sel.innerHTML = '';
-  if (currentPeriod === 'hafta') {
-    data.haftalar.forEach(h => sel.innerHTML += '<option value="'+h+'">Hafta '+h+'</option>');
-  } else {
-    data.aylar.forEach(a => sel.innerHTML += '<option value="'+a.ay+'">'+a.ay_adi+'</option>');
-  }
+  data.haftalar.forEach(h => sel.innerHTML += '<option value="'+h+'">Hafta '+h+'</option>');
   const sezonSel = document.getElementById('sezon-select');
   if (sezonSel && data.sezonlar) {
     const mevcut = sezonSel.value;
