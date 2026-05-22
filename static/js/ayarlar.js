@@ -46,7 +46,12 @@ async function profilSayfasiYukle() {
       el.value = '';
       el.type = 'password';
       const btn = el.parentElement.querySelector('.input-pwd-toggle');
-      if (btn) btn.querySelector('svg').innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8"/><circle cx="12" cy="12" r="3"/>';
+      if (btn) {
+        const eyeOn  = btn.querySelector('.eye-on');
+        const eyeOff = btn.querySelector('.eye-off');
+        if (eyeOn)  eyeOn.style.display  = '';
+        if (eyeOff) eyeOff.style.display = 'none';
+      }
     });
 
     // Admin sekmeleri: yönetici değilse gizle, değişse genel'e dön
@@ -258,9 +263,10 @@ function togglePwd(inputId, btn) {
   const el = document.getElementById(inputId);
   const show = el.type === 'password';
   el.type = show ? 'text' : 'password';
-  btn.querySelector('svg').innerHTML = show
-    ? '<line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 11 7 11 7a13.16 13.16 0 0 1-1.67 2.68M6.61 6.61A13.526 13.526 0 0 0 1 12s4 7 11 7a9.74 9.74 0 0 0 5.39-1.61" stroke="currentColor" stroke-width="2" fill="none"/>'
-    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8"/><circle cx="12" cy="12" r="3"/>';
+  const eyeOn  = btn.querySelector('.eye-on');
+  const eyeOff = btn.querySelector('.eye-off');
+  if (eyeOn)  eyeOn.style.display  = show ? 'none' : '';
+  if (eyeOff) eyeOff.style.display = show ? ''     : 'none';
 }
 
 function toggleDarkModePref(cb) {
