@@ -7,104 +7,114 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f5f7; background-image: radial-gradient(circle at 20% 20%, rgba(224,32,32,0.04) 0%, transparent 50%); }
-.top-logo { position: fixed; top: 24px; left: 28px; }
-.top-logo img { height: 32px; }
-.card { background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 20px; padding: 44px 40px 36px; width: 100%; max-width: 420px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
-.card-logo { display: flex; justify-content: center; margin-bottom: 20px; }
-.card-logo img { height: 28px; }
-.divider { height: 1px; background: rgba(0,0,0,0.07); margin-bottom: 22px; }
-.welcome-badge { display: inline-flex; align-items: center; gap: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600; color: #15803d; margin-bottom: 14px; }
-.card-title { font-size: 20px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
-.card-sub { font-size: 13px; color: #8a9ab5; margin-bottom: 26px; line-height: 1.5; }
-.user-info { background: #f8f9fb; border: 1px solid #e8eaed; border-radius: 10px; padding: 10px 14px; margin-bottom: 20px; font-size: 12px; color: #6b7280; }
+body { font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f5f7; background-image: radial-gradient(circle at 20% 20%, rgba(224,32,32,0.04) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(224,32,32,0.03) 0%, transparent 50%); }
+.card { background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 20px; padding: 0; overflow: hidden; width: 100%; max-width: 420px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.08), 0 32px 64px rgba(0,0,0,0.04); }
+.brand-strip { height: 4px; background: linear-gradient(90deg, #D64545 0%, #8E2820 100%); }
+.card-inner { padding: 40px 44px 36px; }
+.card-logo { display: flex; justify-content: center; margin-bottom: 14px; }
+.card-logo img { height: 56px; object-fit: contain; }
+.card-eyebrow { text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #D64545; margin-bottom: 18px; }
+.badge-wrap { display: flex; justify-content: center; }
+.welcome-badge { display: inline-flex; align-items: center; gap: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 20px; padding: 5px 13px; font-size: 11px; font-weight: 700; color: #15803d; margin: 0 auto 14px; letter-spacing: 0.02em; }
+.card-title { text-align: center; font-size: 26px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.02em; margin-bottom: 8px; }
+.card-sub { text-align: center; font-size: 13.5px; color: #6b7280; margin-bottom: 22px; line-height: 1.5; max-width: 340px; margin-left: auto; margin-right: auto; }
+.card-sub strong { color: #1a1a2e; font-weight: 700; }
+.user-info { background: #f8f9fb; border: 1px solid #e8eaed; border-radius: 10px; padding: 10px 14px; margin-bottom: 22px; font-size: 12px; color: #6b7280; }
 .user-info strong { color: #1a1a2e; font-weight: 600; }
 .field-label { font-size: 12px; font-weight: 600; color: #4a5568; margin-bottom: 6px; display: block; }
 .field { position: relative; margin-bottom: 14px; }
 .field input { width: 100%; padding: 12px 42px 12px 14px; font-size: 13.5px; font-family: inherit; border: 1.5px solid rgba(0,0,0,0.10); border-radius: 10px; background: #f8f9fb; color: #1a1a2e; outline: none; transition: all 0.2s; }
-.field input:focus { border-color: #e02020; background: #fff; box-shadow: 0 0 0 3px rgba(224,32,32,0.08); }
+.field input:focus { border-color: #D64545; background: #fff; box-shadow: 0 0 0 3px rgba(214,69,69,0.10); }
 .toggle-pw { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #c0ccd8; }
 .toggle-pw:hover { color: #888; }
 .strength-bar { height: 4px; border-radius: 2px; background: #eee; margin-top: 6px; overflow: hidden; }
 .strength-fill { height: 100%; border-radius: 2px; transition: all 0.3s; width: 0; }
 .strength-text { font-size: 11px; margin-top: 4px; font-weight: 500; }
-.btn { width: 100%; padding: 13px; font-size: 14px; font-weight: 600; font-family: inherit; color: #fff; background: #e02020; border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; }
-.btn:hover { background: #c01818; box-shadow: 0 4px 16px rgba(224,32,32,0.25); }
+.btn { width: 100%; padding: 13px; font-size: 14px; font-weight: 700; font-family: inherit; color: #fff; background: linear-gradient(135deg, #D64545 0%, #8E2820 100%); border: none; border-radius: 10px; cursor: pointer; transition: filter 0.2s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; box-shadow: 0 6px 20px rgba(214,69,69,0.22); }
+.btn:hover { filter: brightness(1.05); box-shadow: 0 8px 24px rgba(214,69,69,0.30); }
 .btn:disabled { opacity: 0.7; cursor: not-allowed; }
 .spinner { display: none; width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.error-msg { background: rgba(224,32,32,0.06); border: 1px solid rgba(224,32,32,0.18); color: #c01818; font-size: 12.5px; font-weight: 500; padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; display: none; }
+.error-msg { background: rgba(214,69,69,0.06); border: 1px solid rgba(214,69,69,0.18); color: #8E2820; font-size: 12.5px; font-weight: 500; padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; display: none; }
 .error-msg.show { display: block; }
 .redirect-box { display: none; text-align: center; padding: 8px 0; }
+.redirect-box .card-logo { margin-bottom: 24px; }
 .redirect-icon { width: 56px; height: 56px; background: #f0fdf4; border: 2px solid #d4edda; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
 .redirect-title { font-size: 18px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
-.redirect-sub { font-size: 13px; color: #6b7a90; line-height: 1.6; }
+.redirect-sub { font-size: 13px; color: #6b7280; line-height: 1.6; }
 .progress-bar { height: 3px; background: #e8eaed; border-radius: 2px; margin-top: 20px; overflow: hidden; }
-.progress-fill { height: 100%; background: #e02020; border-radius: 2px; animation: progressAnim 2.5s linear forwards; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #D64545 0%, #8E2820 100%); border-radius: 2px; animation: progressAnim 2.5s linear forwards; }
 @keyframes progressAnim { from { width: 0; } to { width: 100%; } }
 .page-footer { position: fixed; bottom: 20px; width: 100%; text-align: center; font-size: 11px; color: #b0bec8; }
-.page-footer span { color: #e02020; }
+.page-footer span { color: #D64545; }
 </style>
 </head>
 <body>
 
-<a class="top-logo" href="/login">
-  <img src="{{ url_for('static', filename='images/sporthink-logo.png') }}" alt="Sporthink">
-</a>
-
 <div class="card">
-  <div class="card-logo">
-    <img src="{{ url_for('static', filename='images/sporthink-logo.png') }}" alt="Sporthink">
-  </div>
-  <div class="divider"></div>
+  <div class="brand-strip"></div>
+  <div class="card-inner">
 
-  <div id="form-section">
-    <div class="welcome-badge">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-      Davet Onaylandı
-    </div>
-    <div class="card-title">Hesabınızı Oluşturun</div>
-    <div class="card-sub">Merhaba {% if ad %}<strong>{{ ad }}</strong>, {% endif %}şifrenizi belirleyerek panele erişebilirsiniz.</div>
-
-    <div class="user-info">
-      Hesap: <strong>{{ email }}</strong>
-    </div>
-
-    <div class="error-msg" id="error-msg"></div>
-
-    <form onsubmit="handleSubmit(event)">
-      <div class="field">
-        <label class="field-label">Şifre Belirleyin</label>
-        <input type="password" id="sifre" placeholder="En az 6 karakter" oninput="checkStrength()" required autofocus>
-        <span class="toggle-pw" onclick="togglePw('sifre','eye1')">
-          <svg id="eye1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-        </span>
-        <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
-        <div class="strength-text" id="strength-text"></div>
+    <div id="form-section">
+      <div class="card-logo">
+        <img src="{{ url_for('static', filename='images/sporthink-logo.png') }}" alt="Sporthink">
       </div>
+      <div class="card-eyebrow">Hesap Oluşturma</div>
 
-      <div class="field">
-        <label class="field-label">Şifre Tekrar</label>
-        <input type="password" id="sifre2" placeholder="Şifrenizi tekrar girin" required>
-        <span class="toggle-pw" onclick="togglePw('sifre2','eye2')">
-          <svg id="eye2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+      <div class="badge-wrap">
+        <span class="welcome-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          Davet Onaylandı
         </span>
       </div>
 
-      <button type="submit" class="btn" id="submit-btn">
-        <div class="spinner" id="spinner"></div>
-        <span id="btn-text">Hesabımı Oluştur</span>
-      </button>
-    </form>
-  </div>
+      <div class="card-title">Hesabınızı Oluşturun</div>
+      <div class="card-sub">Merhaba {% if ad %}<strong>{{ ad }}</strong>, {% endif %}şifrenizi belirleyerek panele erişebilirsiniz.</div>
 
-  <div class="redirect-box" id="redirect-section">
-    <div class="redirect-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      <div class="user-info">
+        Hesap: <strong>{{ email }}</strong>
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+
+      <form onsubmit="handleSubmit(event)">
+        <div class="field">
+          <label class="field-label">Şifre Belirleyin</label>
+          <input type="password" id="sifre" placeholder="En az 6 karakter" oninput="checkStrength()" required autofocus>
+          <span class="toggle-pw" onclick="togglePw('sifre','eye1')">
+            <svg id="eye1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </span>
+          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+          <div class="strength-text" id="strength-text"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Şifre Tekrar</label>
+          <input type="password" id="sifre2" placeholder="Şifrenizi tekrar girin" required>
+          <span class="toggle-pw" onclick="togglePw('sifre2','eye2')">
+            <svg id="eye2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </span>
+        </div>
+
+        <button type="submit" class="btn" id="submit-btn">
+          <div class="spinner" id="spinner"></div>
+          <span id="btn-text">Hesabımı Oluştur</span>
+        </button>
+      </form>
     </div>
-    <div class="redirect-title">Hesabınız Hazır!</div>
-    <div class="redirect-sub">Şifreniz belirlendi. Dashboard'a yönlendiriliyorsunuz...</div>
-    <div class="progress-bar"><div class="progress-fill"></div></div>
+
+    <div class="redirect-box" id="redirect-section">
+      <div class="card-logo">
+        <img src="{{ url_for('static', filename='images/sporthink-logo.png') }}" alt="Sporthink">
+      </div>
+      <div class="redirect-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <div class="redirect-title">Hesabınız Hazır!</div>
+      <div class="redirect-sub">Şifreniz belirlendi. Dashboard'a yönlendiriliyorsunuz...</div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+    </div>
+
   </div>
 </div>
 
@@ -136,7 +146,7 @@ function checkStrength() {
   if (/[0-9]/.test(val)) score++;
   if (/[^A-Za-z0-9]/.test(val)) score++;
   const levels = [
-    { w: '20%', color: '#e02020', label: 'Çok Zayıf', tc: '#e02020' },
+    { w: '20%', color: '#D64545', label: 'Çok Zayıf', tc: '#D64545' },
     { w: '40%', color: '#ff7043', label: 'Zayıf',     tc: '#ff7043' },
     { w: '60%', color: '#ffc107', label: 'Orta',      tc: '#b8860b' },
     { w: '80%', color: '#66bb6a', label: 'İyi',       tc: '#2e7d32' },
