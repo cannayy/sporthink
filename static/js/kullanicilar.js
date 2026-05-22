@@ -10,7 +10,7 @@ async function kullanicilariYukle() {
       const benim = k.id === window._currentUserId;
       const toggleBtn = benim ? '' : k.aktif
         ? `<button onclick="kullaniciPasifYap(${k.id})" class="btn-mini warning">Pasif Yap</button>`
-        : `<button onclick="kullaniciAktifYap(${k.id})" class="btn-mini success">Aktif Yap</button>`;
+        : (!k.beklemede ? `<button onclick="kullaniciAktifYap(${k.id})" class="btn-mini success">Aktif Yap</button>` : '');
       const silBtn = !benim
         ? `<button onclick="kullaniciKaliciSil(${k.id},'${(k.ad||k.email).replace(/'/g,"\\'")}')" class="btn-mini danger">Sil</button>`
         : '<span style="color:var(--border-md);font-size:11px">—</span>';
