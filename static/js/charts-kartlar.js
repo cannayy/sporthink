@@ -97,7 +97,7 @@ function showDetay(d, tip, rank) {
     tipBadge.textContent = (rank ? '#'+rank+' ' : '') + (tip === 'bs' ? 'Best Seller' : 'Worst Seller');
     tipBadge.style.background = tip === 'bs'
       ? (isDark ? 'rgba(78,138,102,0.12)' : '#f0fdf4')
-      : (isDark ? 'rgba(168,86,80,0.12)'  : '#fff0f0');
+      : (isDark ? 'rgba(200,66,56,0.12)'  : '#fff0f0');
     tipBadge.style.color = tip === 'bs' ? _mc.green : _mc.red;
   }
   const imgWrap = document.getElementById('urun-modal-img-wrap');

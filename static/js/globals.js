@@ -25,8 +25,8 @@ const DONUT_COLORS     = ['#C0392B', '#27AE60', '#2563EB'];
 const DONUT_COLORS_EXT = ['#C0392B','#27AE60','#2563EB','#B45309','#9D174D','#065F46','#1E40AF','#92400E','#6D28D9','#0E7490','#7C3AED','#BE185D'];
 
 /* Karanlık mod — düşük doygunluk, mat, koyu zeminde okunur */
-const DONUT_COLORS_DARK     = ['#A85650', '#6BAF85', '#5270A6'];
-const DONUT_COLORS_EXT_DARK = ['#A85650','#6BAF85','#5270A6','#9A7A38','#884E7A','#3A8070','#485A8E','#9E6445','#664A9A','#387A84','#7A42A0','#9A4065'];
+const DONUT_COLORS_DARK     = ['#C84238', '#6BAF85', '#5270A6'];
+const DONUT_COLORS_EXT_DARK = ['#C84238','#6BAF85','#5270A6','#9A7A38','#884E7A','#3A8070','#485A8E','#9E6445','#664A9A','#387A84','#7A42A0','#9A4065'];
 
 const PAGE_TITLES = {
   dashboard:     'Dashboard <span>Satış Analiz Paneli</span>',

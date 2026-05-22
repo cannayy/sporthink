@@ -6,16 +6,16 @@
 
 body.dark {
   /* ── Marka & semantik renkler (daha düşük krom, mat his) ── */
-  --red:        #A85650;
-  --red-deep:   #7A3A35;
-  --red-soft:   #2A1A18;
+  --red:        #C84238;
+  --red-deep:   #8E2820;
+  --red-soft:   #2A1410;
   --green:      #4E8A66;
   --blue:       #5270A6;
   --yellow:     #D9B470;
   --purple:     #A78BFA;
-  --lol-amber:      #A85650;
-  --lol-amber-deep: #7A3A35;
-  --lol-amber-soft: rgba(168,86,80,0.30);
+  --lol-amber:      #C84238;
+  --lol-amber-deep: #8E2820;
+  --lol-amber-soft: rgba(200,66,56,0.30);
 
   /* ── Yüzeyler (saf siyahtan ve eflatundan kaçınılır;
         sıcak-nötr gri lacivert kaydırma) ── */
@@ -56,7 +56,7 @@ body.dark .nav-logo:hover { opacity: 0.82; transition: opacity 0.15s; }
 body.dark .nav-item:hover { background: rgba(255,255,255,0.025); }
 body.dark .nav-item:hover svg { stroke: var(--red) !important; }
 body.dark .nav-item:hover .nav-item-label { color: var(--red); }
-body.dark .nav-collapse-btn:hover { background: rgba(168,86,80,0.07); color: var(--red); }
+body.dark .nav-collapse-btn:hover { background: rgba(200,66,56,0.07); color: var(--red); }
 body.dark .nav-sub-item:hover { background: rgba(255,255,255,0.025); color: var(--red); }
 body.dark .nav-filter-acc-head:hover,
 body.dark .nav-filter-head:hover { background: rgba(255,255,255,0.025); }
@@ -64,9 +64,9 @@ body.dark .nav-filter-acc-head:hover .nav-filter-icon { stroke: var(--red); }
 body.dark .nav-filter-acc-head:hover .nav-filter-acc-label { color: var(--red); }
 body.dark .nav-filter-head:hover .nav-filter-icon { stroke: var(--red); }
 body.dark .nav-filter-head:hover .nav-filter-label { color: var(--red); }
-body.dark .nav-filter-clear-btn:hover { color: var(--red); background: rgba(168,86,80,0.06); }
-body.dark .nav-filter-section.acc-open .nav-filter-acc-head { background: rgba(168,86,80,0.06); }
-body.dark .nav-filter-group.open .nav-filter-head { background: rgba(168,86,80,0.06); }
+body.dark .nav-filter-clear-btn:hover { color: var(--red); background: rgba(200,66,56,0.06); }
+body.dark .nav-filter-section.acc-open .nav-filter-acc-head { background: rgba(200,66,56,0.06); }
+body.dark .nav-filter-group.open .nav-filter-head { background: rgba(200,66,56,0.06); }
 body.dark .nav-filter-body { background: rgba(255,255,255,0.015); }
 body.dark .kartlar-sort-label { color: var(--text-light); }
 body.dark .kartlar-toolbar .sort-pills { background: #1a1a1f; border-color: #2d2d33; }
@@ -81,9 +81,9 @@ body.dark .active-filter-clear-all:hover { color: #ff5a5a; }
 body.dark .active-chip { background: #27272A; color: #a1a1aa; border-color: #3f3f46; }
 body.dark .nav-filter-count-badge { background: #2d2d33; color: #71717a; }
 body.dark .nav-filter-clear-btn { border-color: #3f3f46; color: #71717a; }
-body.dark .nav-filter-clear-btn:hover { background: rgba(168,86,80,0.12); border-color: rgba(168,86,80,0.4); color: #ff5a5a; }
+body.dark .nav-filter-clear-btn:hover { background: rgba(200,66,56,0.12); border-color: rgba(200,66,56,0.4); color: #ff5a5a; }
 body.dark .product-card[data-mode="best"]  { --accent: #4E8A66; --accent-bg: rgba(78,138,102,0.14); --accent-border: rgba(78,138,102,0.35); }
-body.dark .product-card[data-mode="worst"] { --accent: #A85650; --accent-bg: rgba(168,86,80,0.14);  --accent-border: rgba(168,86,80,0.35); }
+body.dark .product-card[data-mode="worst"] { --accent: #C84238; --accent-bg: rgba(200,66,56,0.14);  --accent-border: rgba(200,66,56,0.35); }
 body.dark .card-metrics-grid { background: #18181b; border-color: #2d2d33; }
 body.dark .card-metric-cell + .card-metric-cell { border-left-color: #2d2d33; }
 body.dark .card-metric-cell.sort-hl { border-left-color: var(--accent-border); }
@@ -122,7 +122,7 @@ body.dark .sis-h {
   background: linear-gradient(to right, var(--card-2), var(--card));
   border-bottom-color: var(--border);
 }
-body.dark .ayar-card-icon { background: rgba(168,86,80,0.10); }
+body.dark .ayar-card-icon { background: rgba(200,66,56,0.10); }
 body.dark .ayar-card-icon svg { stroke: var(--red); }
 
 /* ── TABLO ZEMİNLERİ ── */
@@ -159,7 +159,7 @@ body.dark .ku-rol-select:focus,
 body.dark .nav-filter-select:focus {
   background: var(--card-2);
   border-color: var(--red);
-  box-shadow: 0 0 0 3px rgba(168,86,80,0.12);
+  box-shadow: 0 0 0 3px rgba(200,66,56,0.12);
 }
 body.dark .input-text:disabled { background: var(--card-2); }
 body.dark .input-pwd-toggle { color: var(--text-muted); }
@@ -173,10 +173,10 @@ body.dark .btn-primary {
   border-color: transparent;
   box-shadow: none;
 }
-body.dark .btn-primary:hover { background: #8A4540; }
+body.dark .btn-primary:hover { background: #AA3830; }
 body.dark .btn-mini { background: var(--card-2); color: var(--text-mid); border-color: var(--border-md); }
-body.dark .btn-mini.danger { color: var(--red); border-color: rgba(168,86,80,0.32); }
-body.dark .btn-mini.danger:hover { background: rgba(168,86,80,0.06); }
+body.dark .btn-mini.danger { color: var(--red); border-color: rgba(200,66,56,0.32); }
+body.dark .btn-mini.danger:hover { background: rgba(200,66,56,0.06); }
 body.dark .btn-mini.warning { color: var(--blue); border-color: rgba(82,112,166,0.26); }
 body.dark .btn-mini.warning:hover { background: rgba(82,112,166,0.06); }
 /* ── ROZETLER & DURUM ── */
@@ -184,13 +184,13 @@ body.dark .ku-durum.aktif,
 body.dark .st-good { background: rgba(78,138,102,0.10); color: var(--green); }
 body.dark .ku-durum.pasif,
 body.dark .st-bad,
-body.dark .metric-change.down { background: rgba(168,86,80,0.10); color: var(--red); }
+body.dark .metric-change.down { background: rgba(200,66,56,0.10); color: var(--red); }
 body.dark .ku-durum.beklemede { background: rgba(82,112,166,0.10); color: var(--blue); }
 body.dark .st-mid { background: rgba(217,180,112,0.10); color: var(--yellow); }
 body.dark .metric-change.up { background: rgba(78,138,102,0.10); color: var(--green); }
 body.dark .role-yonetici,
-body.dark .role-kullanici { background: rgba(168,86,80,0.14); color: var(--red); }
-body.dark .role-pill { background: rgba(168,86,80,0.14); color: var(--red); }
+body.dark .role-kullanici { background: rgba(200,66,56,0.14); color: var(--red); }
+body.dark .role-pill { background: rgba(200,66,56,0.14); color: var(--red); }
 
 /* ── METRİK KARTI ── */
 body.dark .metric-card:hover { border-color: var(--border-md); }
@@ -203,27 +203,27 @@ body.dark .tab.active { color: var(--red); border-bottom-color: var(--red); }
 
 /* ── ŞAL/PROFİL MESAJLARI ── */
 body.dark .profil-msg.ok { background: rgba(78,138,102,0.10); color: var(--green); }
-body.dark .profil-msg.err { background: rgba(168,86,80,0.10); color: var(--red); }
+body.dark .profil-msg.err { background: rgba(200,66,56,0.10); color: var(--red); }
 
 /* ── TOPBAR USER & DROPDOWN ── */
 body.dark .topbar-user { background: var(--card); border-color: var(--border-md); }
-body.dark .topbar-user:hover { border-color: rgba(168,86,80,0.32); }
+body.dark .topbar-user:hover { border-color: rgba(200,66,56,0.32); }
 body.dark .user-dropdown { background: var(--card-2); border-color: var(--border-md); }
 body.dark .user-dropdown-header { background: var(--card); border-bottom-color: var(--border); }
 body.dark .user-dropdown-item:hover { background: rgba(255,255,255,0.025); color: var(--text-dark); }
-body.dark .user-dropdown-item.danger:hover { background: rgba(168,86,80,0.07); }
+body.dark .user-dropdown-item.danger:hover { background: rgba(200,66,56,0.07); }
 body.dark .user-dropdown-divider { background: var(--border); }
 
 /* ── MODALLAR ── */
 body.dark .modal-overlay { background: rgba(0,0,0,0.45); }
 body.dark .modal,
 body.dark .stok-modal { background: var(--card-2); border-color: var(--border-md); box-shadow: var(--shadow-lg); }
-body.dark .modal-header { background: linear-gradient(to right, rgba(168,86,80,0.07), var(--card-2)); border-bottom-color: var(--border); }
+body.dark .modal-header { background: linear-gradient(to right, rgba(200,66,56,0.07), var(--card-2)); border-bottom-color: var(--border); }
 body.dark .modal-close { background: var(--bg); border-color: var(--border-md); color: var(--text-muted); }
-body.dark .modal-close:hover { background: rgba(168,86,80,0.07); border-color: rgba(168,86,80,0.32); color: var(--red); }
+body.dark .modal-close:hover { background: rgba(200,66,56,0.07); border-color: rgba(200,66,56,0.32); color: var(--red); }
 body.dark .detail-row,
 body.dark .risk-row { border-bottom-color: var(--border-soft); }
-body.dark .risk-tag.indirim { background: rgba(168,86,80,0.10); color: var(--red); border-color: rgba(168,86,80,0.24); }
+body.dark .risk-tag.indirim { background: rgba(200,66,56,0.10); color: var(--red); border-color: rgba(200,66,56,0.24); }
 body.dark .risk-tag.transfer { background: rgba(78,138,102,0.10); color: var(--green); border-color: rgba(78,138,102,0.22); }
 body.dark .risk-tag.siparis { background: rgba(82,112,166,0.10); color: var(--blue); border-color: rgba(82,112,166,0.22); }
 
@@ -235,21 +235,21 @@ body.dark .card-footer { background: var(--card); border-top-color: var(--border
 /* ── BSWS BAR ── */
 body.dark .bsws-tab { background: var(--card); color: var(--text-muted); border-color: var(--border-md); }
 body.dark .bsws-tab.bs-active { background: rgba(78,138,102,0.07); color: var(--green); border-color: var(--green); }
-body.dark .bsws-tab.ws-active { background: rgba(168,86,80,0.07); color: var(--red); border-color: var(--red); }
+body.dark .bsws-tab.ws-active { background: rgba(200,66,56,0.07); color: var(--red); border-color: var(--red); }
 
 /* ── SİS PARAMETRELERİ EKRANI ── */
 body.dark .ge-chip.bs { background: rgba(78,138,102,0.10); color: var(--green); }
-body.dark .ge-chip.ciro { background: rgba(168,86,80,0.10); color: var(--red); }
+body.dark .ge-chip.ciro { background: rgba(200,66,56,0.10); color: var(--red); }
 body.dark .ge-chip.kar { background: rgba(82,112,166,0.10); color: var(--blue); }
 body.dark .vo-sc { background: var(--card-2); border-color: var(--border); }
-body.dark .vo-sc.active { background: rgba(168,86,80,0.05); border-color: var(--red); }
+body.dark .vo-sc.active { background: rgba(200,66,56,0.05); border-color: var(--red); }
 body.dark .sis-vo-sep,
 body.dark .vo-stat-sep { background: var(--border-soft); }
 body.dark .vo-sezon-secili { background: var(--card-2); border-color: var(--border-md); }
 
 /* ── SLIDER, TOPLAM BANT ── */
 body.dark .slider-toplam { background: rgba(78,138,102,0.07); border-color: rgba(78,138,102,0.22); color: var(--green); }
-body.dark .slider-toplam.invalid { background: rgba(168,86,80,0.07); border-color: rgba(168,86,80,0.24); color: var(--red); }
+body.dark .slider-toplam.invalid { background: rgba(200,66,56,0.07); border-color: rgba(200,66,56,0.24); color: var(--red); }
 
 /* ── PERIOD TOGGLE ── */
 body.dark .period-toggle-sm { background: var(--card); border-color: var(--border-md); }
@@ -306,7 +306,7 @@ body.dark .bs-dot   { background: var(--green) !important; }
 body.dark .bs-title { color:      var(--green) !important; }
 body.dark .ws-dot   { background: var(--red)   !important; }
 body.dark .ws-title { color:      var(--red)   !important; }
-body.dark .nav-item.active:hover { background: #8A4540; }
+body.dark .nav-item.active:hover { background: #AA3830; }
 
 /* ── AYARLAR: SİRALAMA TOPLAM (inline style override) ── */
 body.dark #sp-total-num    { color: var(--green) !important; }
@@ -326,7 +326,7 @@ body.dark .sis-ge-row-mrk  .sis-ge-chip { color: #9F67F5      !important; backgr
 
 /* ── KULLANICI SİLME BUTONU ── */
 body.dark .silme-confirm-btn { background: var(--red) !important; }
-body.dark .silme-confirm-btn:hover { background: #8A4540 !important; }
+body.dark .silme-confirm-btn:hover { background: #AA3830 !important; }
 
 /* ============================================================================
    SİSTEM PARAMETRELERİ — Dark Mode Revizyon
@@ -353,12 +353,12 @@ body.dark .sis-num {
   background: var(--red) !important;
   color: #fff !important;
   border-color: transparent !important;
-  box-shadow: 0 2px 8px rgba(168,86,80,0.28) !important;
+  box-shadow: 0 2px 8px rgba(200,66,56,0.28) !important;
 }
 
 /* Section başlığı gradient'i — sıcak kırmızı yıkanma yerine kart-2 → kart */
 body.dark .sis-section-head {
-  background: linear-gradient(to right, rgba(168,86,80,0.07), var(--card) 60%) !important;
+  background: linear-gradient(to right, rgba(200,66,56,0.07), var(--card) 60%) !important;
   border-bottom-color: var(--border);
 }
 body.dark .sis-section-title { color: var(--text-dark); }
@@ -385,9 +385,9 @@ body.dark .sis-btn-primary {
   background: var(--red) !important;
   color: #fff !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(168,86,80,0.22) !important;
+  box-shadow: 0 2px 8px rgba(200,66,56,0.22) !important;
 }
-body.dark .sis-btn-primary:hover { background: #8A4540 !important; opacity: 1; }
+body.dark .sis-btn-primary:hover { background: #AA3830 !important; opacity: 1; }
 
 /* ── 1. VERİ ORTAMI — KPI şeridi ── */
 body.dark .sis-vo-stats      { background: transparent; border: none; }
@@ -476,15 +476,15 @@ body.dark .sis-ge-row-mrk  .sis-ms-num { color: #9F67F5      !important; }
 
 /* Section başlık gradient'inde rgba(230,48,48,…) leak'i kapat */
 body.dark .sis-section .sis-section-head {
-  background: linear-gradient(to right, rgba(168,86,80,0.07), var(--card) 60%);
+  background: linear-gradient(to right, rgba(200,66,56,0.07), var(--card) 60%);
 }
 
 /* ── SEZON KARTLARI — dark mode ── */
-body.dark .vo-sc-red  .vo-sc-chip { background: rgba(168,86,80,0.14);   color: var(--red);    }
+body.dark .vo-sc-red  .vo-sc-chip { background: rgba(200,66,56,0.14);   color: var(--red);    }
 body.dark .vo-sc-blue .vo-sc-chip { background: rgba(82,112,166,0.14);  color: var(--blue);   }
 body.dark .vo-sc-gray .vo-sc-chip { background: rgba(217,180,112,0.14); color: var(--yellow); }
 
-body.dark .vo-sc-red.active  { border-color: var(--red);    background: rgba(168,86,80,0.04);    }
+body.dark .vo-sc-red.active  { border-color: var(--red);    background: rgba(200,66,56,0.04);    }
 body.dark .vo-sc-blue.active { border-color: var(--blue);   background: rgba(82,112,166,0.04);   }
 body.dark .vo-sc-gray.active { border-color: var(--yellow); background: rgba(217,180,112,0.04);  }
 
@@ -511,8 +511,8 @@ body.dark .nav-sub-dot-ws { background: var(--red)   !important; }
 
 /* ── BİLDİRİM (DARK MODE) ── */
 body.dark .bildirim-btn { background: var(--card); border-color: var(--border-md); color: var(--text-muted); }
-body.dark .bildirim-btn:hover { border-color: rgba(168,86,80,0.32); color: var(--red); background: rgba(168,86,80,0.07); }
-body.dark .bildirim-wrap.open .bildirim-btn { border-color: rgba(168,86,80,0.32); color: var(--red); background: rgba(168,86,80,0.10); }
+body.dark .bildirim-btn:hover { border-color: rgba(200,66,56,0.32); color: var(--red); background: rgba(200,66,56,0.07); }
+body.dark .bildirim-wrap.open .bildirim-btn { border-color: rgba(200,66,56,0.32); color: var(--red); background: rgba(200,66,56,0.10); }
 body.dark .bildirim-badge { background: var(--red); border-color: var(--card); }
 body.dark .bildirim-dropdown { background: var(--card-2); border-color: var(--border-md); }
 body.dark .bildirim-dropdown-header { background: var(--card); border-bottom-color: var(--border); }
