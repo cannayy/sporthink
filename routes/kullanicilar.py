@@ -288,6 +288,7 @@ def sistem_bilgisi():
                    MIN(urun_giris_tarihi)       AS baslangic,
                    MAX(urun_giris_tarihi)       AS bitis
             FROM urun_analiz
+            WHERE hafta_no = 1
         """)
         global_row = cursor.fetchone()
 
@@ -303,7 +304,7 @@ def sistem_bilgisi():
                    MIN(urun_giris_tarihi)       AS baslangic,
                    MAX(urun_giris_tarihi)       AS bitis
             FROM urun_analiz
-            WHERE sezon IS NOT NULL AND sezon != 'nan'
+            WHERE hafta_no = 1 AND sezon IS NOT NULL AND sezon != 'nan'
             GROUP BY sezon
             ORDER BY sezon
         """)
@@ -311,7 +312,7 @@ def sistem_bilgisi():
 
         cursor.execute("""
             SELECT sezon FROM urun_analiz
-            WHERE sezon IS NOT NULL AND sezon != 'nan'
+            WHERE hafta_no = 1 AND sezon IS NOT NULL AND sezon != 'nan'
             GROUP BY sezon
             ORDER BY MAX(urun_giris_tarihi) DESC NULLS LAST
             LIMIT 1
