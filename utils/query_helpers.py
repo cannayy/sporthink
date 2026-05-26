@@ -14,19 +14,24 @@ def login_required(f):
     return decorated
 
 
+_CINSIYET_DB_MAP = {
+    'Kız Çocuk': ['Kız', 'Kız Çocuk'],
+    'Erkek Çocuk': ['EC', 'Erkek Çocuk'],
+    'Çocuk': ['Çocuk', 'Kız', 'Kız Çocuk', 'EC', 'Erkek Çocuk'],
+}
+
 def cinsiyet_filter(where, params, cinsiyet):
     if not cinsiyet:
         return
     cinsiyet_list = [c.strip() for c in cinsiyet.split(',') if c.strip()]
     if not cinsiyet_list:
         return
-    if 'Çocuk' in cinsiyet_list:
-        cinsiyet_list = [c for c in cinsiyet_list if c != 'Çocuk']
-        cinsiyet_list += ['Çocuk', 'Kız Çocuk', 'Erkek Çocuk']
-    cinsiyet_list = list(set(cinsiyet_list))
-    placeholders = ','.join(['%s'] * len(cinsiyet_list))
+    expanded = set()
+    for c in cinsiyet_list:
+        expanded.update(_CINSIYET_DB_MAP.get(c, [c]))
+    placeholders = ','.join(['%s'] * len(expanded))
     where.append(f"cinsiyet IN ({placeholders})")
-    params.extend(cinsiyet_list)
+    params.extend(expanded)
 
 
 def sezon_filter(where, params, sezon):
